@@ -1,0 +1,9 @@
+# folders
+node_modules
+cert
+.idea
+dist
+*/**/.next
+
+#files
+*.iml
