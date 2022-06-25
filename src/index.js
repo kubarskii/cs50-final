@@ -6,10 +6,8 @@ import winston from 'winston';
 import net from 'net';
 import runNext from './next/index.js';
 import runWS from './ws/index.js';
-import {
-  LB_PORT, NEXT_PORT, REST_API_PORT, routesConfig,
-} from './constants.js';
-import { parseRequest } from './utils.js';
+import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants.js';
+import { proxy } from './reverse-proxy.js';
 
 const services = {
   NEXT: null,
@@ -23,10 +21,11 @@ async function main() {
   };
   const logger = new winston.createLogger(winstonOptions);
 
+  /*
   const httpsOptions = {
     key: fs.readFileSync(path.normalize('cert/key.pem'), 'utf8'),
     cert: fs.readFileSync(path.normalize('cert/server.crt'), 'utf8'),
-  };
+  }; */
 
   if (cluster.isPrimary) {
     const servicesEntries = Object.entries(services);
@@ -42,84 +41,12 @@ async function main() {
         }
       });
     }
-    const tcpServer = net.createServer();
-
-    tcpServer.on('connection', (socket) => {
-      socket.on('data', (buffer) => {
-        const connectionConfig = {
-          host: 'localhost',
-          port: 3001,
-          allowHalfOpen: true,
-          timeout: 30000,
-        };
-
-        let data;
-        try {
-          data = parseRequest(buffer);
-          socket.url = data.url;
-        } catch {
-          // Websocket connection
-        }
-        const headersObject = {};
-        if (data && data.headers.length % 2 === 0) {
-          for (let i = 0; i < data.headers.length; i += 2) {
-            if (data.headers[i].toLowerCase() === 'accept-encoding') continue;
-            headersObject[data.headers[i]] = data.headers[i + 1];
-          }
-        }
-        const routes = Object.keys(routesConfig);
-
-        if (data) {
-          for (let i = 0; i < routes.length; i += 1) {
-            const reg = new RegExp(routes[i]);
-            const params = routesConfig[routes[i]];
-            const matches = data.url.match(reg);
-            if (matches) {
-              socket.port = params.port;
-              connectionConfig.port = socket.port || params.port;
-            }
-          }
-        }
-
-        const proxySocket = net.createConnection(connectionConfig);
-
-        proxySocket.on('error', (e) => {
-          console.error(e);
-        });
-
-        proxySocket.on('end', () => {
-          proxySocket.destroy();
-        });
-
-        socket.on('error', (e) => {
-          console.error(e);
-        });
-
-        /** Working with http */
-        proxySocket.write(buffer);
-        socket.on('end', () => {
-          proxySocket.end();
-        });
-
-        proxySocket.on('data', (chunk) => {
-          socket.write(chunk);
-        });
-
-        proxySocket.on('end', () => {
-          socket.end();
-        });
-      });
-    });
-
-    tcpServer.on('error', (err) => {
-      console.error(err);
-    });
-
+    const tcpServer = net.createServer(proxy);
+    tcpServer.on('error', console.error);
     tcpServer.on('close', () => {
       console.log('client disconnected');
     });
-
-    tcpServer.listen({ host: 'localhost', port: LB_PORT }, () => {
+    tcpServer.listen({ host: '127.0.0.1', port: LB_PORT }, () => {
       logger.info(`TCP Server is running on ${LB_PORT}`);
     });
   }
@@ -141,7 +68,7 @@ async function main() {
       res.end();
     });
 
-    runWS(srv);
+    runWS({ port: 3006 });
 
     srv.listen(REST_API_PORT, () => {
       logger.info(`REST is running on ${REST_API_PORT}`);

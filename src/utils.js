@@ -1,5 +1,7 @@
 import { HTTPParser } from 'http-parser-js';
 
+export const compose = (...fns) => (x) => fns.reduceRight((y, f) => f(y), x);
+
 export function parseRequest(input) {
   const parser = new HTTPParser(HTTPParser.REQUEST);
   let complete = false;
@@ -44,7 +46,8 @@ export function parseRequest(input) {
   parser.finish();
 
   if (!complete) {
-    throw new Error('Could not parse request');
+    return null;
+    // throw new Error('Could not parse request');
   }
 
   const body = Buffer.concat(bodyChunks);
