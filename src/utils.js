@@ -52,6 +52,13 @@ export function parseRequest(input) {
 
   const body = Buffer.concat(bodyChunks);
 
+  const headersMap = {}
+  if (headers.length % 2 === 0) {
+    for (let i = 0; i < headers.length; i += 2) {
+      headersMap[headers[i]] = headers[i + 1];
+    }
+  }
+
   return {
     shouldKeepAlive,
     upgrade,
@@ -62,5 +69,6 @@ export function parseRequest(input) {
     headers,
     body,
     trailers,
+    headersMap
   };
 }

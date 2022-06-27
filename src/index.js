@@ -1,6 +1,4 @@
-import http from 'node:http';
-import fs from 'fs';
-import path from 'path';
+import http from 'http';
 import cluster from 'cluster';
 import winston from 'winston';
 import net from 'net';
@@ -14,20 +12,15 @@ const services = {
   REST: null,
 };
 
-async function main() {
+(async function main() {
   const consoleTransport = new winston.transports.Console();
   const winstonOptions = {
     transports: [consoleTransport],
   };
   const logger = new winston.createLogger(winstonOptions);
 
-  /*
-  const httpsOptions = {
-    key: fs.readFileSync(path.normalize('cert/key.pem'), 'utf8'),
-    cert: fs.readFileSync(path.normalize('cert/server.crt'), 'utf8'),
-  }; */
-
-  if (cluster.isPrimary) {
+  /** Support for older Node versions*/
+  if (cluster.isPrimary || cluster.isMaster) {
     const servicesEntries = Object.entries(services);
     for (let i = 0; i < servicesEntries.length; i += 1) {
       const worker = cluster.fork({ CHILD_P_NAME: servicesEntries[i][0] });
@@ -74,6 +67,4 @@ async function main() {
       logger.info(`REST is running on ${REST_API_PORT}`);
     });
   }
-}
-
-await main();
+})()

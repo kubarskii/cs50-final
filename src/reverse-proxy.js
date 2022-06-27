@@ -1,79 +1,86 @@
 import net from 'net';
-import { routesConfig } from './constants.js';
-import { compose, parseRequest } from './utils.js';
+import {routesConfig} from './constants.js';
+import {parseRequest} from "./utils.js";
+import {PassThrough} from 'stream';
 
+const PROTOCOLS = {
+    HTTP: 'HTTP',
+    WS: 'WS'
+}
 const socketsMap = new Map();
+const passPipe = new PassThrough()
+passPipe.on('data', (chunk) => {
+    console.log(chunk);
+})
+
+const getRouteData = (url = '', routesConfig) => {
+    const routesKeys = Object.keys(routesConfig);
+    for (let i = 0; i < routesKeys.length; i += 1) {
+        const {host, port} = routesConfig[routesKeys[i]]
+        if (url.match(routesKeys[i])) return {host, port}
+    }
+    return {}
+}
 /**
  * @param {Socket} socket
  * */
 // eslint-disable-next-line import/prefer-default-export
 export const proxy = (socket) => {
-  socket.on('close', () => socketsMap.delete(socket));
-  socket.on('error', () => compose(socket.destroy, () => socketsMap.delete(socket)));
-  socket.on('data', (buffer) => {
-    /** @type NetConnectOpts */
-    const connectionConfig = {
-      host: 'localhost',
-      port: socketsMap.get(socket)?.port || routesConfig.default.port,
-      timeout: 30000,
-    };
+    socket.on('data', (buffer) => {
+        const parsedBuffer = parseRequest(buffer)
+        const protocol = (parsedBuffer?.headersMap?.Upgrade === 'websocket' || !parsedBuffer) ? PROTOCOLS.WS : PROTOCOLS.HTTP;
+        const {url} = parsedBuffer || {};
+        const {host = 'localhost', port = routesConfig.default.port} = getRouteData(url, routesConfig)
+        const config = {host, port};
+        const cachedSocket = socketsMap.get(socket)?.connection
 
-    const data = parseRequest(buffer);
-    if (data) {
-      socketsMap.set(socket, {
-        url: data?.url || '/',
-      });
-    }
+        const client = new net.Socket()
 
-    const headersObject = {};
-    if (data && data.headers.length % 2 === 0) {
-      for (let i = 0; i < data.headers.length; i += 2) {
-        if (data.headers[i].toLowerCase() !== 'accept-encoding') headersObject[data.headers[i]] = data.headers[i + 1];
-      }
-    }
+        const connection = (protocol === PROTOCOLS.WS && cachedSocket)
+            ? cachedSocket
+            : client.connect({...config});
 
-    const isWebsocketConnection = (headersObject.Upgrade === 'websocket' && headersObject.Connection === 'Upgrade');
-
-    const routes = Object.keys(routesConfig);
-
-    if (data) {
-      for (let i = 0; i < routes.length; i += 1) {
-        const reg = new RegExp(routes[i]);
-        const params = routesConfig[routes[i]];
-        const matches = data.url.match(reg);
-        if (matches) {
-          const s = socketsMap.get(socket) || {};
-          socketsMap.set(socket, { ...s, port: params.port });
-          connectionConfig.port = socketsMap.get(socket)?.port || params.port;
+        const socketMeta = {
+            url: parsedBuffer?.url,
+            port,
+            host,
+            protocol,
+            connection
         }
-      }
-    }
+        socket.on('drain', () => connection.resume())
+        if (!connection.write(buffer)) socket.pause()
 
-    const proxySocket = socketsMap.get(socket)?.connection
-        || net.createConnection(connectionConfig);
+        /** Subscribe only if no subscription*/
+        if (!socketsMap.has(socket)) {
 
-    if (isWebsocketConnection) {
-      socketsMap.set(socket, {
-        ...(socketsMap.get(socket) || {}),
-        connection: proxySocket,
-      });
-    }
+            connection.on('drain', () => socket.resume())
+            connection.on('error', (e) => {
+                console.error(e);
+                socketsMap.delete(socket);
+            })
+            connection.on('data', (chunk) => {
+                if (protocol === PROTOCOLS.WS) console.log('passing data');
+                if (!socket.write(chunk)) connection.pause();
+            })
 
-    proxySocket.on('error', compose(console.error, () => socket.destroy()));
-    proxySocket.on('drain', () => socket.resume());
-
-    socket.on('error', console.error);
-    socket.on('end', () => proxySocket.end());
-    socket.on('drain', () => proxySocket.resume());
-
-    const isProxySocketNotFull = proxySocket.write(buffer);
-    if (!isProxySocketNotFull) {
-      socket.pause();
-    }
-
-    proxySocket.on('data', (chunk) => {
-      const isNotFull = socket.write(chunk);
-      if (!isNotFull) proxySocket.pause();
+            connection.on('end', () => {
+                if (protocol === PROTOCOLS.HTTP) socketsMap.delete(socket)
+                connection.removeAllListeners('data')
+                connection.destroy()
+            })
+            socket.on('end', () => {
+                if (protocol === PROTOCOLS.HTTP) socketsMap.delete(socket)
+                connection.removeAllListeners('data')
+                connection.destroy()
+            })
+        }
+        if (!!parsedBuffer && !socketsMap.has(socket) && protocol === PROTOCOLS.WS) {
+            socketsMap.set(socket, socketMeta)
+        }
     });
-  });
+    socket.on('error', console.error)
+    socket.on('end', () => {
+        socket.destroy()
+    })
+
 };

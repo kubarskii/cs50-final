@@ -1,17 +1,16 @@
-import { WebSocketServer } from 'ws';
+import {WebSocketServer} from 'ws';
 
 export default function runWS(config) {
-  const ws = new WebSocketServer(config);
+    const wss = new WebSocketServer(config);
 
-  ws.on('open', () => {
-    console.error('TEST', 'connection');
-    ws.send('connection');
-  });
+    wss.on('connection', function connection(ws) {
+        ws.on('message', function message(data) {
+            console.log('received: %s', data);
+            ws.send(data.toString())
+        });
 
-  ws.on('message', (msg) => {
-    console.log(msg);
-    ws.send(msg);
-  });
+        ws.send('something');
+    });
 
-  return ws;
+    return wss;
 }
