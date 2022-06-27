@@ -1,18 +1,13 @@
 import net from 'net';
 import {routesConfig} from './constants.js';
 import {parseRequest} from "./utils.js";
-import {PassThrough} from 'stream';
 
 const PROTOCOLS = {
     HTTP: 'HTTP',
     WS: 'WS'
 }
-const socketsMap = new Map();
-const passPipe = new PassThrough()
-passPipe.on('data', (chunk) => {
-    console.log(chunk);
-})
 
+const socketsMap = new Map();
 const getRouteData = (url = '', routesConfig) => {
     const routesKeys = Object.keys(routesConfig);
     for (let i = 0; i < routesKeys.length; i += 1) {
@@ -24,7 +19,6 @@ const getRouteData = (url = '', routesConfig) => {
 /**
  * @param {Socket} socket
  * */
-// eslint-disable-next-line import/prefer-default-export
 export const proxy = (socket) => {
     socket.on('data', (buffer) => {
         const parsedBuffer = parseRequest(buffer)
@@ -47,11 +41,12 @@ export const proxy = (socket) => {
             protocol,
             connection
         }
-        socket.on('drain', () => connection.resume())
+
         if (!connection.write(buffer)) socket.pause()
 
         /** Subscribe only if no subscription*/
         if (!socketsMap.has(socket)) {
+            socket.on('drain', () => connection.resume())
 
             connection.on('drain', () => socket.resume())
             connection.on('error', (e) => {
@@ -59,7 +54,6 @@ export const proxy = (socket) => {
                 socketsMap.delete(socket);
             })
             connection.on('data', (chunk) => {
-                if (protocol === PROTOCOLS.WS) console.log('passing data');
                 if (!socket.write(chunk)) connection.pause();
             })
 
@@ -79,8 +73,4 @@ export const proxy = (socket) => {
         }
     });
     socket.on('error', console.error)
-    socket.on('end', () => {
-        socket.destroy()
-    })
-
 };
