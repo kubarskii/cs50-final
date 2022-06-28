@@ -2,10 +2,10 @@ import http from 'http';
 import cluster from 'cluster';
 import winston from 'winston';
 import net from 'net';
-import runNext from './next/index.js';
-import runWS from './ws/index.js';
-import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants.js';
-import { proxy } from './reverse-proxy.js';
+import runNext from './next/index';
+import runWS from './ws/index';
+import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants';
+import { proxy } from './reverse-proxy';
 
 const services = {
   NEXT: null,

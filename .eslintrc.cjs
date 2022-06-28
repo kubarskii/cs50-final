@@ -21,5 +21,7 @@ module.exports = {
     "no-useless-escape": 0,
     "react/jsx-filename-extension": 0,
     "new-cap": 1,
+    "import/prefer-default-export": 0,
+    "consistent-return": 0,
   },
 };

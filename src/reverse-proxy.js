@@ -1,6 +1,6 @@
 import net from 'net';
-import { ROUTES_CONFIG } from './constants.js';
-import { parseRequest } from './utils.js';
+import { ROUTES_CONFIG } from './constants';
+import { parseRequest } from './utils';
 
 const PROTOCOLS = {
   HTTP: 'HTTP',
@@ -20,22 +20,22 @@ const getRouteData = (url = '') => {
 /**
  * @param {Socket} socket
  * */
-// eslint-disable-next-line import/prefer-default-export
 export const proxy = (socket) => {
   socket.on('data', (buffer) => {
+    /**
+     * TODO: Add types description
+     * null | parsed HTTP request
+     * */
     const parsedBuffer = parseRequest(buffer);
     const protocol = (parsedBuffer?.headersMap?.Upgrade === 'websocket' || !parsedBuffer) ? PROTOCOLS.WS : PROTOCOLS.HTTP;
     const { url } = parsedBuffer || {};
     const { host = 'localhost', port = ROUTES_CONFIG.default.port } = getRouteData(url);
     const config = { host, port };
     const cachedSocket = socketsMap.get(socket)?.connection;
-
     const client = new net.Socket();
-
     const connection = (protocol === PROTOCOLS.WS && cachedSocket)
       ? cachedSocket
       : client.connect({ ...config });
-
     const socketMeta = {
       url: parsedBuffer?.url,
       port,
@@ -44,8 +44,8 @@ export const proxy = (socket) => {
       connection,
     };
 
+    /** Checking for backpressure */
     if (!connection.write(buffer)) socket.pause();
-
     /** Subscribe only if no subscription */
     if (!socketsMap.has(socket)) {
       socket.on('drain', () => connection.resume());

@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon --experimental-specifier-resolution=node src/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@babel/core": "7.18.5",
-    "@babel/preset-env": "7.18.2",
+    "@babel/preset-env": "^7.18.2",
     "eslint": "8.18.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-plugin-import": "2.26.0",
