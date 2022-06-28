@@ -19,7 +19,10 @@ const services = {
   };
   const logger = new winston.createLogger(winstonOptions);
 
-  /** Support for older Node versions */
+  /**
+   * TODO: add .nvmrc
+   * Support for older Node versions
+   * */
   if (cluster.isPrimary || cluster.isMaster) {
     const servicesEntries = Object.entries(services);
     for (let i = 0; i < servicesEntries.length; i += 1) {

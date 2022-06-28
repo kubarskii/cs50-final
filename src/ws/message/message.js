@@ -1,7 +1,9 @@
 import MessageAbstractClassError from '../error';
-
-export default class AbstractMessage {
-  send() {
+/**
+ * @typedef Message
+ * */
+export default class Message {
+  async send() {
     throw new MessageAbstractClassError('send');
   }
 }
