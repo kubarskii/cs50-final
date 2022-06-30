@@ -18,10 +18,13 @@ module.exports = {
     'react',
   ],
   rules: {
+    "new-cap": 1,
+    "valid-typeof": 1,
     "no-useless-escape": 0,
     "react/jsx-filename-extension": 0,
-    "new-cap": 1,
     "import/prefer-default-export": 0,
     "consistent-return": 0,
+    "class-methods-use-this": 0,
+    "no-useless-constructor": 0,
   },
 };

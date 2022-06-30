@@ -15,7 +15,7 @@ export function parseRequest(input) {
   let trailers = [];
   const bodyChunks = [];
 
-  parser[HTTPParser.kOnHeadersComplete] = function (req) {
+  parser[HTTPParser.kOnHeadersComplete] = (req) => {
     shouldKeepAlive = req.shouldKeepAlive;
     upgrade = req.upgrade;
     method = HTTPParser.methods[req.method];
@@ -25,16 +25,16 @@ export function parseRequest(input) {
     headers = req.headers;
   };
 
-  parser[HTTPParser.kOnBody] = function (chunk, offset, length) {
+  parser[HTTPParser.kOnBody] = (chunk, offset, length) => {
     bodyChunks.push(chunk.slice(offset, offset + length));
   };
 
   /** This is actually the event for trailers, go figure. */
-  parser[HTTPParser.kOnHeaders] = function (t) {
+  parser[HTTPParser.kOnHeaders] = (t) => {
     trailers = t;
   };
 
-  parser[HTTPParser.kOnMessageComplete] = function () {
+  parser[HTTPParser.kOnMessageComplete] = () => {
     complete = true;
   };
 

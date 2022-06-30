@@ -17,6 +17,7 @@ const services = {
   const winstonOptions = {
     transports: [consoleTransport],
   };
+  // eslint-disable-next-line new-cap
   const logger = new winston.createLogger(winstonOptions);
 
   /**
@@ -65,7 +66,7 @@ const services = {
       res.end();
     });
 
-    const wss = runWS({ server: srv });
+    runWS({ server: srv });
 
     srv.listen(REST_API_PORT, () => {
       logger.info(`REST is running on ${REST_API_PORT}`);
