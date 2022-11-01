@@ -2,11 +2,11 @@
 
 export default class MessageProcessor {
   /**
-     * @template T
-     * @param {T & AbstractMessage} message
+     * @param {AbstractMessage} message
      * @return {void}
      * */
   process(message) {
-    message.send();
+    message.send().then(() => {
+    });
   }
 }

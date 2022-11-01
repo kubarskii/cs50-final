@@ -1,11 +1,13 @@
-import AbstractMessage from './abstract-message';
 import { MESSAGE_COMMANDS, MESSAGE_TYPES } from '../constants';
-import '../typedef';
+import '../../typedef';
+import BaseMessage from './abstract-message';
 
 /**
+ * Basic class for Server Errors occurred on the server check that were not expected
+ *
  * @implements {IMessage}
  * */
-export default class ServerErrorMessage extends AbstractMessage {
+export default class ServerErrorMessage extends BaseMessage {
   /**
      * @param {string} message
      * @param {WebSocket} ws
@@ -15,6 +17,7 @@ export default class ServerErrorMessage extends AbstractMessage {
     this.ws = ws;
   }
 
+  /** @override */
   async send() {
     /** @type MessageDTO */
     const msg = [

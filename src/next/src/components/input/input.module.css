@@ -1,0 +1,21 @@
+.controlsWrapper {
+    display: flex;
+    flex: 1;
+    margin: auto;
+}
+
+.inputWrapper {
+    display: flex;
+    box-sizing: border-box;
+    flex: 1;
+    padding: 1px 12px;
+    border: 1px solid var(--grey-primary);
+    border-radius: 12px;
+}
+
+.input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+}

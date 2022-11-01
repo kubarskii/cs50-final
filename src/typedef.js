@@ -3,13 +3,18 @@
  */
 
 /**
- * Message payload passed in MessageDTO as a last parameter
+ * @typedef { 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 } MessageStatus
+ */
+
+/**
+ * BaseMessage payload passed in MessageDTO as a last parameter
  * @typedef {object} MessagePayload
  * @property {string} [message] plain text sent by users/server
  * @property {string | number} [chatId]
  * @property {string} [messageId]
  * @property {MessageErrorType} [errorType]
- * @property {number[]} [messageStatus]
+ * @property {object} [sender]
+ * @property {MessageStatus[]} [messageStatus]
  * */
 
 /**
@@ -19,7 +24,7 @@
 
 /**
  * @typedef { "message" | "command" | "typing" | "system" } MessageCommand
- * command - used for chatbots, message - default value;
+ * command - can be used for chatbots, message - default value;
  * @typedef {MessagePayload} MessagePayload
  * @typedef {[MessageType, MessageCommand, MessagePayload]} MessageDTO
  * */
@@ -31,19 +36,14 @@
  * */
 
 /**
- * @typedef {object} ArraySchema
- * @property {string} type
- * @property {number[] | string[]} [in]
- * */
-
-/**
  * @typedef {object} Items
  * @property {string} [type]
  * @property {object} [ref]
+ * @property {Record<string | number,  ObjectSchema>} [properties]
  * */
 
 /**
- * @typedef {"string" | "number" | "array" | "object" | "null" | "boolean"} JSONTypes
+ * @typedef {"string" | "number" | "array" | "object" | "null" | "boolean" & string} JSONTypes
  * */
 
 /**
@@ -56,10 +56,15 @@
  * @typedef {object} ObjectSchema
  * @property {JSONTypes} [type]
  * @property {Items} [items]
- * @property {Record<string, SchemaProperty>} properties
- * @property {string[]} required
+ * @property {Record<string, SchemaProperty>} [properties]
+ * @property {ObjectSchema} [ref]
  * */
 
 /**
- * @typedef {ArraySchema[] | ObjectSchema | boolean | number | null | string} JSONSchema
+ * @typedef {object} Required
+ * @property {string[]} required - required fields that MUST be passed
+ */
+
+/**
+ * @typedef {ObjectSchema & Required} Schema
  * */

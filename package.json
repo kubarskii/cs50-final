@@ -3,15 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "nodemon --experimental-specifier-resolution=node src/index.js"
+    "start": "nodemon --exec node_modules/.bin/babel-node src/index.js",
+    "test": "jest",
+    "test:watch": "jest -w"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hyperjump/json-schema": "^0.23.3",
     "http-parser-js": "0.5.7",
     "next": "12.1.0",
+    "pg": "^8.8.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "sqlite3": "5.0.8",
@@ -19,13 +22,17 @@
     "ws": "8.8.0"
   },
   "devDependencies": {
-    "@babel/core": "7.18.5",
-    "@babel/preset-env": "^7.18.2",
+    "@babel/cli": "^7.19.3",
+    "@babel/core": "^7.19.6",
+    "@babel/node": "^7.20.0",
+    "@babel/preset-env": "^7.19.4",
     "eslint": "8.18.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-jest": "26.5.3",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-react": "7.30.0",
-    "eslint-plugin-react-hooks": "4.6.0"
+    "eslint-plugin-react-hooks": "4.6.0",
+    "jest": "28.1.2"
   }
 }

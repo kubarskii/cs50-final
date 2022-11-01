@@ -1,16 +1,25 @@
+// eslint-disable-next-line max-classes-per-file
 import MessageAbstractClassError from '../error';
 
 /**
- * Abstract class that is used to create inheritors
  * @interface IMessage
- * */
-export default class AbstractMessage {
-  /** @param {any} message */
-  constructor(message) {
-    this.message = message;
-  }
-
+ */
+export class AbstractMessage {
+  /** @abstract */
   async send() {
     throw new MessageAbstractClassError('send');
+  }
+}
+
+/** **************************************************
+ * IGNORE warnings about method is not implemented!!!
+ ***************************************************
+ * Such approach is used to ignore property (like "message")
+ * to be considered as unimplemented method
+ * */
+export default class BaseMessage extends AbstractMessage {
+  constructor(message) {
+    super();
+    this.message = message;
   }
 }

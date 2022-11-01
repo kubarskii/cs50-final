@@ -1,11 +1,11 @@
-import AbstractMessage from './abstract-message';
 import { MESSAGE_COMMANDS, MESSAGE_TYPES } from '../constants';
-import '../typedef';
+import '../../typedef';
+import BaseMessage from './abstract-message';
 
 /**
  * @implements {IMessage}
  * */
-export default class TextMessage extends AbstractMessage {
+export default class TextMessage extends BaseMessage {
   /**
      * @param {string} message
      * @param {WebSocket} ws
@@ -15,6 +15,7 @@ export default class TextMessage extends AbstractMessage {
     this.ws = ws;
   }
 
+  /** @override  */
   async send() {
     /** @type MessageDTO */
     const msg = [

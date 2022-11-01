@@ -19,7 +19,7 @@ export const MESSAGE_COMMANDS = {
 };
 
 /**
- * @type { Record<string, number> }
+ * @type { Record<string, MessageStatus> }
  * */
 export const MESSAGE_STATUSES = {
   NOT_DELIVERED: 1,
@@ -29,4 +29,6 @@ export const MESSAGE_STATUSES = {
   VIEWED: 5,
   UNAUTHORIZED: 6,
   CANNOT_BE_PROCESSED: 7,
+  TYPING: 8,
+  EMPTY_MESSAGE: 9,
 };

@@ -44,7 +44,7 @@ export function parseRequest(input) {
      * However, you can of course call execute() multiple times with multiple chunks,
      * e.g. from a stream.
      * But then you have to refactor the entire logic to be async
-     * (e.g. resolve a Promise in kOnMessageComplete and add timeout logic).
+     * (e.g. resolve a Promise in kOnMessageComplete check add timeout logic).
      */
   parser.execute(input);
   parser.finish();

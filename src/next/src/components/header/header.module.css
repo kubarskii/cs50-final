@@ -1,4 +1,5 @@
-.header-list {
-    list-style-type: none;
+.headerContainer {
+    width: 100%;
     display: flex;
+    flex: 1;
 }

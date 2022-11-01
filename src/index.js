@@ -2,10 +2,12 @@ import http from 'http';
 import cluster from 'cluster';
 import winston from 'winston';
 import net from 'net';
-import runNext from './next/index';
-import runWS from './ws/index';
+import url from 'url';
+import { runNext } from './next';
+import runWS from './ws';
 import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants';
 import { proxy } from './reverse-proxy';
+import { routes } from './rest/router';
 
 const services = {
   NEXT: null,
@@ -17,13 +19,8 @@ const services = {
   const winstonOptions = {
     transports: [consoleTransport],
   };
-  // eslint-disable-next-line new-cap
   const logger = new winston.createLogger(winstonOptions);
 
-  /**
-   * TODO: add .nvmrc
-   * Support for older Node versions
-   * */
   if (cluster.isPrimary || cluster.isMaster) {
     const servicesEntries = Object.entries(services);
     for (let i = 0; i < servicesEntries.length; i += 1) {
@@ -38,11 +35,11 @@ const services = {
         }
       });
     }
-    /** TODO: Relace with TLS in production */
+
     const tcpServer = net.createServer(proxy);
-    tcpServer.on('error', console.error);
+    tcpServer.on('error', (err) => logger.error(err.message));
     tcpServer.on('close', () => {
-      console.log('client disconnected');
+      logger.info('connection closed');
     });
     tcpServer.listen({ host: '127.0.0.1', port: LB_PORT }, () => {
       logger.info(`TCP Server is running on ${LB_PORT}`);
@@ -51,19 +48,25 @@ const services = {
 
   if (process.env.CHILD_PROCESS_NAME === 'NEXT') {
     /** build first to run production version */
-    await runNext({ dev: true }, NEXT_PORT, logger);
+    await runNext({ dev: true }, NEXT_PORT);
     logger.info(`NEXT is running on ${NEXT_PORT}`);
   }
 
   if (process.env.CHILD_PROCESS_NAME === 'REST') {
-    const srv = http.createServer((req, res) => {
+    const srv = http.createServer(async (req, res) => {
       res.on('error', (e) => {
         console.error(e);
       });
       res.writeHead(200, { 'Content-Type': 'text/json' });
-      const buffer = Buffer.from(JSON.stringify({ data: 'this is from rest service' }));
-      res.write(buffer);
-      res.end();
+      const route = url.parse(req.url).pathname.replace('/rest/api', '');
+      const handler = routes[route];
+      if (typeof handler === 'function') {
+        await handler(req, res);
+      } else {
+        const buffer = Buffer.from(JSON.stringify({ data: 'this is from rest service' }));
+        res.write(buffer);
+        res.end();
+      }
     });
 
     runWS({ server: srv });

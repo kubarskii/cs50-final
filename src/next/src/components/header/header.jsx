@@ -1,30 +1,32 @@
-import Image from 'next/image'
-import Link from "next/link.js";
-import styles from './header.module.css'
+import React from 'react';
+import styles from './header.module.css';
+import Logo from './logo/logo';
 
-/**
- * @return JSX.Element
- * */
-export default function Header(_props) {
-    return (
-        <header>
-            <ul className={styles['header-list']}>
-                <li className={'logo-wrapper'}>
-                    <Link href="/" as="/">
-                        <a style={{width: '100px', height: 'auto'}}>
-                            <Image layout="intrinsic" width={80} height={60} className={'logo-img'} src={'/test.png'}/>
-                        </a>
-                    </Link>
+export default function Header(props) {
+  const {
+    title = 'Chatbot',
+    headerStyles = {},
+    imgSrc,
+    custom,
+    logoContainerStyle,
+    logoStyles,
+    controlContainerStyles,
+    titleStyle = {},
+    controls,
+  } = props;
 
-                </li>
-                <li>
-                    <Link href="/login" as="/login">
-                        <a>
-                            <p>Login</p>
-                        </a>
-                    </Link>
-                </li>
-            </ul>
-        </header>
-    )
+  return (
+    <div className={['header', styles.headerContainer].join(' ')} style={headerStyles}>
+      <Logo
+        custom={custom}
+        logoContainerStyle={logoContainerStyle}
+        logoStyles={logoStyles}
+        imgSrc={imgSrc}
+      />
+      <h3 style={{ flex: 1, ...titleStyle }}>{title}</h3>
+      <div style={controlContainerStyles}>
+        {controls}
+      </div>
+    </div>
+  );
 }

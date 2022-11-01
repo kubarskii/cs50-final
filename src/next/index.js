@@ -9,7 +9,7 @@ import path from 'path';
  * @param {NextServerOptions} config
  * @param {number} port
  * */
-export default async function runNext(config, port) {
+export async function runNext(config, port) {
   /**
      * Slightly isolating Next from other services and updating root folder
      * Next is running in separate cluster

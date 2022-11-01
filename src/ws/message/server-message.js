@@ -1,9 +1,9 @@
-import AbstractMessage from './abstract-message';
+import BaseMessage from './abstract-message';
 
 /**
  * @implements {IMessage}
  * */
-export default class ServerMessage extends AbstractMessage {
+export default class ServerMessage extends BaseMessage {
   /**
    * @param {MessageDTO} message
    * @param {WebSocket} ws
@@ -13,6 +13,7 @@ export default class ServerMessage extends AbstractMessage {
     this.ws = ws;
   }
 
+  /** @override */
   async send() {
     /** @param {MessageDTO} */
     this.ws.send(JSON.stringify(this.message));
