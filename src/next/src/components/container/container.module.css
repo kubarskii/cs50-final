@@ -4,5 +4,9 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    overflow: auto;
+}
+
+.mainContainer{
+    background-image: url("../../assets/img/bg.jpg");
+    background-size: cover;
 }

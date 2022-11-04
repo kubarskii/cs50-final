@@ -1,4 +1,21 @@
-p {
+.tailSvg {
+    height: 1rem;
+    position: absolute;
+    bottom: 0;
+    right: -0.35rem;
+    transform: translate(0.07rem, 0);
+    fill: #eeffde;
+}
+
+.tailSvgBot {
+    height: 1rem;
+    bottom: 0;
+    position: absolute;
+    transform: translate(-1.25rem, 0) scaleX(-1);
+    fill: #e5e5ea;
+}
+
+p.messageText {
     font-size: 1rem;
     padding: 0;
     margin: 0;
@@ -110,36 +127,10 @@ p {
     margin-left: auto;
 }
 
-.userMessage::before,
-.userMessage::after,
-.botMessage::before,
-.botMessage::after {
-    bottom: -0.1rem;
-    content: "";
-    height: 1rem;
-    position: absolute;
-}
-
 .userMessage {
     align-self: flex-end;
-    background-color: #0000ff;
-    color: #fff;
+    background-color: #eeffde;
     text-align: left;
-}
-
-.userMessage::before {
-    border-bottom-left-radius: 0.8rem 0.7rem;
-    border-right: 1rem solid #0000ff;
-    right: -0.35rem;
-    transform: translate(0, -0.1rem);
-}
-
-.userMessage::after {
-    background-color: #fff;
-    border-bottom-left-radius: 0.5rem;
-    right: -40px;
-    transform: translate(-30px, -2px);
-    width: 10px;
 }
 
 .userMessage ~ .userMessage {
@@ -159,21 +150,6 @@ p {
     background-color: #e5e5ea;
     color: #000;
     text-align: left;
-}
-
-.botMessage:before {
-    border-bottom-right-radius: 0.8rem 0.7rem;
-    border-left: 1rem solid #e5e5ea;
-    left: -0.35rem;
-    transform: translate(0, -0.1rem);
-}
-
-.botMessage::after {
-    background-color: #fff;
-    border-bottom-right-radius: 0.5rem;
-    left: 20px;
-    transform: translate(-30px, -2px);
-    width: 10px;
 }
 
 .noTail::before {

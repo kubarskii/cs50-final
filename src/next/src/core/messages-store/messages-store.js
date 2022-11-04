@@ -44,8 +44,9 @@ export default class MessagesStore extends Observable {
     return this.$value;
   }
 
-  update(state) {
+  update(state, cb) {
     this.next(state);
+    if (cb && typeof cb === 'function') cb();
   }
 
   updateMessage(id, props) {

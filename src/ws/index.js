@@ -92,6 +92,7 @@ const closeConnection = (clientsArr, ws) => {
 };
 
 const onConnection = (wss) => (ws, request) => {
+  console.log(request.headers['x-authenticate']); // jwt access_token
   const parsedUrl = url.parse(request.url, true);
   const { token } = parsedUrl.query;
   if (!token) {

@@ -53,21 +53,43 @@ export default function Container(props) {
     initialMessages,
   });
 
-  const messagesListRef = useRef < HTMLDivElement > (null);
+  const messagesListRef = useRef(null);
+
   const scrollToLast = useCallback(() => {
     setTimeout(() => {
-      const lastChild = messagesListRef.current?.lastElementChild;
+      const lastChild = messagesListRef.current?.firstElementChild?.lastElementChild;
       if (!lastChild || !messagesListRef.current) return;
-      messagesListRef.current.scrollTop = lastChild.offsetTop;
+      messagesListRef.current.scroll({ top: lastChild.offsetTop, behavior: 'smooth' });
+      //  scrollTop = lastChild.offsetTop;
     });
-  }, [messagesStore]);
+  }, [messagesListRef]);
+
+  const scrollSmooth = useCallback(() => {
+    if (messagesListRef.current) {
+      // @ts-ignore
+      const yCoord = messagesListRef.current.lastChild.offsetTop;
+      // @ts-ignore
+      messagesListRef.current.scrollTo({
+        left: 0,
+        top: yCoord,
+        behavior: 'smooth',
+      });
+    }
+  }, [messagesListRef]);
 
   return (
     <ControlsProvider inputDisabled={inputDisabled} isOnline={isOnline}>
       <div style={containerStyles}>
         {(!!messagesStore && !!registry)
                     && (
-                    <>
+                    <div
+                      className={styles.mainContainer}
+                      style={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
                       <Header
                         onClose={onClose}
                         headerStyles={headerStyles}
@@ -84,24 +106,33 @@ export default function Container(props) {
                         controls={controls}
                       />
                       <div
-                        style={messagesListStyle}
-                        className={styles.container}
+                        style={{
+                          overflowY: 'overlay',
+                          display: 'flex',
+                          flex: 1,
+                          scrollBehavior: 'smooth',
+                        }}
                         ref={messagesListRef}
                       >
-                        {messages.map((el, index) => (
-                          <BotMessage
-                            key={el.uniqueId}
-                            needTail={el.sender !== messages[index + 1]?.sender}
-                            messagesStore={messagesStore}
-                            widgetsRegistry={registry}
-                            type={el.type}
-                            sender={el.sender}
-                            props={el.props}
-                            scroll={scrollToLast}
-                            uniqueId={el.uniqueId}
-                            currentMessage={messagesStore.getMessage(el.uniqueId)}
-                          />
-                        ))}
+                        <div
+                          style={messagesListStyle}
+                          className={styles.container}
+                        >
+                          {messages.map((el, index) => (
+                            <BotMessage
+                              key={el.uniqueId}
+                              needTail={el.sender !== messages[index + 1]?.sender}
+                              messagesStore={messagesStore}
+                              widgetsRegistry={registry}
+                              type={el.type}
+                              sender={el.sender}
+                              props={el.props}
+                              scroll={scrollSmooth}
+                              uniqueId={el.uniqueId}
+                              currentMessage={messagesStore.getMessage(el.uniqueId)}
+                            />
+                          ))}
+                        </div>
                       </div>
                       <Footer
                         containerStyles={footerContainerStyles}
@@ -118,7 +149,7 @@ export default function Container(props) {
                         messageParser={messageParser}
                         messagesStore={messagesStore}
                       />
-                    </>
+                    </div>
                     )}
       </div>
     </ControlsProvider>

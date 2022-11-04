@@ -23,11 +23,17 @@
  * */
 
 /**
- * @typedef { "message" | "command" | "typing" | "system" } MessageCommand
+ *   @typedef { "message" | "command" | "typing" | "system" | "stopTyping" } MessageCommand
  * command - can be used for chatbots, message - default value;
+ * /
+
+ /**
  * @typedef {MessagePayload} MessagePayload
+ * /
+
+ /**
  * @typedef {[MessageType, MessageCommand, MessagePayload]} MessageDTO
- * */
+ */
 
 /**
  * @typedef {boolean} ValidationFlag

@@ -1,6 +1,6 @@
 import net from 'net';
 import { ROUTES_CONFIG } from './constants';
-import { parseRequest } from './utils';
+import { parseRequest } from './utils/utils';
 
 const PROTOCOLS = {
   HTTP: 'HTTP',

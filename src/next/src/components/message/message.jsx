@@ -27,7 +27,16 @@ export default React.memo((props) => {
 
   const UserMessage = useCallback(() => (
     <div className={[styles.message, styles.userMessage, tail].join(' ')}>
-      <p aria-label="User message">{text}</p>
+      <p className={styles.messageText} aria-label="User message">{text}</p>
+      {needTail
+          && (
+          <svg className={styles.tailSvg} viewBox="1.206 1.675 70.253 89.665" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M 1.608 2.178 L 2.047 59.227 C 2.8 89.269 55.176 93.882 69.813 89.324 C 47.226 81.53 41.265 79.33 35.076 59.696 C 34.221 56.983 34.723 0.142 34.781 1.899"
+            />
+            <path d="M 35.203 1.755 L 1.577 1.906" />
+          </svg>
+          )}
     </div>
   ), [messageProps, tail]);
 
@@ -40,8 +49,17 @@ export default React.memo((props) => {
         {loading ? (
           <div className={styles['dot-elastic']} />
         ) : (
-          <p aria-label="Bot message">{text}</p>
+          <p className={styles.messageText} aria-label="Bot message">{text}</p>
         )}
+        {needTail
+            && (
+            <svg className={styles.tailSvgBot} viewBox="1.206 1.675 70.253 89.665" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M 1.608 2.178 L 2.047 59.227 C 2.8 89.269 55.176 93.882 69.813 89.324 C 47.226 81.53 41.265 79.33 35.076 59.696 C 34.221 56.983 34.723 0.142 34.781 1.899"
+              />
+              <path d="M 35.203 1.755 L 1.577 1.906" />
+            </svg>
+            )}
       </div>
     ),
     [messageProps, tail],

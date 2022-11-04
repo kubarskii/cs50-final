@@ -4,6 +4,7 @@
 import URL from 'url';
 import db from '../lib/db';
 import User from '../models/user';
+import { JWT } from '../utils/jwt';
 
 /**
  * @typedef { string | number | boolean | RequestListener } RouteAction
@@ -50,9 +51,6 @@ export const routes = {
         case 'POST':
           try {
             const body = await getBody(req);
-            /**
-             * TODO: Add hashing for password
-             * */
             await user.create(body);
             res.writeHead(201, 'User created', DEFAULT_HEADERS);
             res.end();
@@ -70,9 +68,15 @@ export const routes = {
         default: {
           const { query } = URL.parse(req.url, true);
           if (query?.login) {
+            const userData = await user.login(query.login, query.password);
+            if (!userData) {
+              res.writeHead(404, 'User not found', DEFAULT_HEADERS);
+              res.end();
+              return;
+            }
+            const accessToken = await JWT.generateJWTForUser(userData);
             res.writeHead(200);
-            const userData = await user.read(query.login, query.password);
-            res.write(Buffer.from(JSON.stringify({ data: userData })));
+            res.write(Buffer.from(JSON.stringify({ accessToken })));
             res.end();
           }
         }

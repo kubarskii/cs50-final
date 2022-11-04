@@ -8,9 +8,19 @@ export default class User extends Base {
     return 'users';
   }
 
-  async read(login, password) {
-    const sql = 'SELECT * FROM users WHERE login=$1 AND password=$2';
-    const { rows } = await this.db.query(sql, [login, password]);
+  async getAll() {
+    const sql = `SELECT * FROM ${this.getTable()}`;
+    const rows = await this.db.query(sql);
+    return rows || [];
+  }
+
+  async getById(id, record) {
+    return super.read(id, record);
+  }
+
+  async login(username, password) {
+    const sql = `SELECT id, name, surname, login FROM ${this.getTable()} WHERE login=$1 AND password=$2`;
+    const { rows } = await this.db.query(sql, [username, password]);
     if (rows.length) {
       return rows[0];
     }

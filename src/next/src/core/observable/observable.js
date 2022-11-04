@@ -15,7 +15,7 @@ export default class Observable {
   }
 
   set value(v) {
-    this.next(v);
+    this.$value = v;
   }
 
   next(v) {

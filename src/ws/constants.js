@@ -16,6 +16,7 @@ export const MESSAGE_COMMANDS = {
   COMMAND: 'command',
   TYPING: 'typing',
   SYS_MESSAGE: 'system',
+  STOP_TYPING: 'stopTyping',
 };
 
 /**

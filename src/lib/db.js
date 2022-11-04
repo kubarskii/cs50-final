@@ -6,7 +6,7 @@ const pool = new pg.Pool(config);
 /**
  * @typedef {object} DBTable
  * @property {(sql: string, args: string[]) => any} query method to crete db queries
- * @property {(id: string, fields: string[]) => any} read read data from table
+ * @property {(id: string, fields: string[]) => any} read login data from table
  * @property {(record: Record<string, string>) => any} create write data to table
  * @property {(id: string, fields: Record<string, string>) => any} update update data in table
  * @property {(id: string) => any} delete delete data from table
@@ -21,7 +21,7 @@ const db = (table) => ({
   /**
      * Create any request to DB
      * @param {string} sql
-     * @param {string[]} args
+     * @param {string[]} [args]
      * */
   async query(sql, args) {
     return pool.query(sql, args);

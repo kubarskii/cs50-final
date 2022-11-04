@@ -22,7 +22,6 @@ export default React.forwardRef((props, ref) => {
   useEffect(() => {
     const unsubscribe = botControls
       .subscribe((v) => {
-        console.log(v);
         const { inputDisabled } = v;
         setDisabled(inputDisabled);
       });

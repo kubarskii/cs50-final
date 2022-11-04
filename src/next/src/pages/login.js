@@ -1,7 +1,15 @@
 import React, { useRef } from 'react';
+import { useRouter } from 'next/router';
 import Header from '../components/head/header';
+import useCookie from '../hooks/useCookie';
 
-const getUser = ({ login, password }) => fetch(`/rest/api/user?login=${login}&password=${password}`);
+const getUser = async ({ login, password }) => {
+  const response = await fetch(`/rest/api/user?login=${login}&password=${password}`);
+  if (response.ok) {
+    return response.json();
+  }
+  throw new Error(response.statusText);
+};
 
 function LoginPage() {
   /**
@@ -9,10 +17,26 @@ function LoginPage() {
      * */
   const formRef = useRef(null);
 
+  const [_, setUserToken] = useCookie('accessToken', '');
+  const router = useRouter();
+
   const onSubmit = (e) => {
     e.preventDefault();
     const { login, password } = formRef.current;
-    getUser({ login: login.value, password: password.value }).then(console.log);
+    getUser({ login: login.value, password: password.value })
+      .then((data) => {
+        const { accessToken } = data;
+        if (accessToken) {
+          setUserToken(accessToken, {
+            days: 365,
+            SameSite: 'Strict',
+          });
+          router.push({
+            pathname: router.query.returnUrl,
+          });
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
