@@ -49,7 +49,7 @@ export default React.forwardRef((props, ref) => {
             />
             {right}
           </div>
-          <button type="submit" style={buttonStyles}>{buttonTitle}</button>
+          <button type="submit" className={styles.sendButton} style={buttonStyles}>{buttonTitle}</button>
         </div>
       </div>
     </form>

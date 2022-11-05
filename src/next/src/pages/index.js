@@ -1,10 +1,16 @@
 import React from 'react';
 import Container from '../components/container/container';
 import InputWrapper from '../components/input-wrapper/input-wrapper.component';
+import useCookie from '../hooks/useCookie';
+import { JWT } from '../../../utils/jwt';
 
 const initialMessages = [];
 
 function HomePage() {
+  const [token] = useCookie('accessToken');
+  const decoded = JWT.decoderJWT(token);
+  const { name, surname } = decoded;
+
   return (
     <div style={{
       display: 'flex',
@@ -17,9 +23,20 @@ function HomePage() {
         borderRight: '1px solid #dfe1e5',
       }}
       >
-        <h3>
-          Rooms here
-        </h3>
+        <div style={{ display: 'flex' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: '#ccc',
+          }}
+          />
+          <h3>
+            {name}
+            {' '}
+            {surname}
+          </h3>
+        </div>
       </aside>
       <div style={{
         height: '100vh',

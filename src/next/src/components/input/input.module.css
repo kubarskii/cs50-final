@@ -1,3 +1,7 @@
+.sendButton:hover{
+    box-shadow: rgb(0 0 0 / 44%) 0px 6px 8px 4px,
+}
+
 .controlsWrapper {
     display: flex;
     flex: 1;
@@ -9,7 +13,7 @@
     box-sizing: border-box;
     flex: 1;
     padding: 1px 12px;
-    border: 1px solid var(--grey-primary);
+    border: 1px solid #ccc;
     border-radius: 12px;
 }
 

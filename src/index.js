@@ -8,6 +8,9 @@ import runWS from './ws';
 import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants';
 import { proxy } from './reverse-proxy';
 import { routes } from './rest/router';
+import Router from './lib/router';
+import { UserController } from './rest/controllers/user.controller';
+import { RoomController } from './rest/controllers/room.controller';
 
 const services = {
   NEXT: null,
@@ -53,21 +56,17 @@ const services = {
   }
 
   if (process.env.CHILD_PROCESS_NAME === 'REST') {
-    const srv = http.createServer(async (req, res) => {
-      res.on('error', (e) => {
-        console.error(e);
-      });
-      res.writeHead(200, { 'Content-Type': 'text/json' });
-      const route = url.parse(req.url).pathname.replace('/rest/api', '');
-      const handler = routes[route];
-      if (typeof handler === 'function') {
-        await handler(req, res);
-      } else {
-        const buffer = Buffer.from(JSON.stringify({ data: 'this is from rest service' }));
-        res.write(buffer);
-        res.end();
-      }
-    });
+    const srv = http.createServer(async () => {});
+    const router = new Router(srv, '/rest/api');
+    router.get('/user', UserController.login);
+    router.post('/user', UserController.register);
+    router.delete('/user', UserController.delete);
+    router.get('/user/rooms', RoomController.getRooms);
+
+    router.post('/room', RoomController.createRoom);
+    router.delete('/room', RoomController.deleteRoom);
+
+    router.get('/messages', RoomController.getMessagesInRoom);
 
     runWS({ server: srv });
 

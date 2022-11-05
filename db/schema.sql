@@ -26,6 +26,7 @@ CREATE TABLE users
     id              bigint generated always as identity,
     login           varchar NOT NULL,
     password        varchar NOT NULL,
+    email           varchar NOT NULL,
     name            varchar DEFAULT NULL,
     surname         varchar DEFAULT NULL,
     phone           int     DEFAULT NULL,

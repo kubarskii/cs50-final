@@ -29,7 +29,7 @@ export default class ChatbotControls extends Observable {
     typing.push(userName);
     this.next({
       ...this.value,
-      typing,
+      typing: [...(new Set(typing))],
     });
   }
 
