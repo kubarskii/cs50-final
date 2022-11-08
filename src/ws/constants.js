@@ -1,3 +1,5 @@
+export const UNIQUE_USER = Symbol('user');
+
 /**
  * @type { Record<string, MessageType> }
  * */

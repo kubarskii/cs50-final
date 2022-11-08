@@ -8,6 +8,9 @@
     "test": "jest",
     "test:watch": "jest -w"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

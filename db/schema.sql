@@ -14,23 +14,26 @@ CREATE TABLE regions
 
 CREATE TABLE rooms
 (
-    id   bigint generated always as identity,
-    name varchar NOT NULL
+    id         bigint generated always as identity,
+    name       varchar NOT NULL,
+    creator_id int     NOT NULL
 );
 
 ALTER TABLE rooms
     ADD CONSTRAINT pkRoom PRIMARY KEY (id);
 
+ALTER TABLE rooms
+    ADD CONSTRAINT fkCreatorId FOREIGN KEY (creator_id) REFERENCES users (id);
+
 CREATE TABLE users
 (
-    id              bigint generated always as identity,
-    login           varchar NOT NULL,
-    password        varchar NOT NULL,
-    email           varchar NOT NULL,
-    name            varchar DEFAULT NULL,
-    surname         varchar DEFAULT NULL,
-    phone           int     DEFAULT NULL,
-    phone_region_id int     DEFAULT NULL
+    id       bigint generated always as identity,
+    login    varchar NOT NULL,
+    password varchar NOT NULL,
+    email    varchar NOT NULL,
+    name     varchar DEFAULT NULL,
+    surname  varchar DEFAULT NULL,
+    phone    varchar DEFAULT NULL
 );
 
 ALTER TABLE users
@@ -48,6 +51,8 @@ ALTER TABLE room_members
 ALTER TABLE room_members
     ADD CONSTRAINT fkUserId FOREIGN KEY (user_id) REFERENCES users (id);
 
+ALTER TABLE room_members
+    ADD CONSTRAINT uniqueOneUserPerRoom UNIQUE (room_id, user_id);
 
 
 CREATE UNIQUE INDEX akUsersLogin ON users (login);
@@ -74,15 +79,16 @@ CREATE TABLE messages
     id          bigint generated always as identity,
     user_id     integer NOT NULL,
     message     text    NOT NULL,
-    receiver_id integer DEFAULT NULL, -- just to highlight user
-    room_id     integer NOT NULL
+    receiver_id integer   DEFAULT NULL, -- just to highlight user
+    room_id     integer NOT NULL,
+    created_at  timestamp DEFAULT now() -- works in PG
 );
 
 ALTER TABLE messages
     ADD CONSTRAINT pkMessage PRIMARY KEY (id);
 
 ALTER TABLE messages
-    ADD CONSTRAINT fkSenderId FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+    ADD CONSTRAINT fkSenderId FOREIGN KEY (user_id) REFERENCES users (id);
 
 ALTER TABLE messages
     ADD CONSTRAINT fkRoomId FOREIGN KEY (room_id) REFERENCES rooms (id) ON DELETE CASCADE;

@@ -1,32 +1,112 @@
 import BaseMessage from './abstract-message';
+import ServerErrorMessage from './server-error-message';
+import Room from '../../models/room';
+import db from '../../lib/db';
+import Message from '../../models/message';
+import { UNIQUE_USER } from '../constants';
+import { findUsersInClients } from '../utils';
 
-/**
- * @implements {IMessage}
- * */
+const room = new Room(db);
+const messageModel = new Message(db);
+
 export default class ServerMessage extends BaseMessage {
   /**
-   * @param {MessageDTO} message
-   * @param {WebSocket} ws
-   * */
-  constructor(message, ws) {
+     * @param {MessageDTO} message
+     * @param {WebSocket} ws
+     * @param {Server} wss
+     * */
+  constructor(message, ws, wss) {
     super(message);
     this.ws = ws;
+    this.server = wss;
+    this.message = this.message.bind(this);
+    this.notifyUsers = this.notifyUsers.bind(this);
+  }
+
+  get clients() {
+    return this.server.clients;
+  }
+
+  async processMessage() {
+    const [_, messageType, payload] = this.value;
+    const handler = this[messageType];
+    if (!handler || typeof handler !== 'function') {
+      this.ws.send(new ServerErrorMessage('Server error can be generated only by server', this.ws));
+    }
+    await handler(payload);
+  }
+
+  /**
+   * @private
+   * */
+  async saveMessage() {
+
+  }
+
+  /**
+   * @private
+   * */
+  async checkUserInTheRoom() {
+
+  }
+
+  /**
+   * @private
+   * @param {MessageType} type
+   * @param {string} roomId
+   * */
+  async notifyUsers(type, roomId) {
+    /**
+     * 1. Getting all users in the room
+     * 2. Getting websockets of users
+     * 3. Sending messages to all of them
+     * */
+    const usersInTheRoom = await room.getUsersInRoom(roomId);
+    const ids = usersInTheRoom.map((user) => user.id);
+    const sockets = new Set();
+    const { clients = [] } = this.server;
+    clients.forEach((el) => {
+      const userDetails = (el[UNIQUE_USER]);
+      if (ids.includes(userDetails.id)) {
+        sockets.add(el);
+      }
+    });
+    const senderId = this.ws[UNIQUE_USER].id;
+    Array.from(sockets).forEach((socket) => {
+      socket.send(JSON.stringify([type, 'message', { message: this.value[2].message, senderId, roomId }]));
+    });
+  }
+
+  async typing() {
+
+  }
+
+  async message(payload) {
+    /**
+         * 1. check room exists
+         * 2. check user in the room
+         * 3. save message to db
+         * 4. notify all users in the room
+         * */
+    const { roomId, message: payloadMessage } = payload;
+    const { rows } = await room.read(roomId);
+    if (!rows.length) return;
+    const userId = this.ws[UNIQUE_USER].id;
+    if (!userId) return;
+    const isUserInTheRoom = await room.isUserInRoom(userId, roomId);
+    if (!isUserInTheRoom) return;
+    await messageModel.create({ user_id: userId, message: payloadMessage, room_id: roomId });
+    await this.notifyUsers(1, roomId);
+  }
+
+  async stopTyping() {
+  }
+
+  async command() {
   }
 
   /** @override */
   async send() {
-    /** @param {MessageDTO} */
-    this.ws.send(JSON.stringify([1, 'typing', { userName: 'Nataliia' }]));
-    setTimeout(() => {
-      this.ws.send(JSON.stringify([1, 'typing', { userName: 'Larisa' }]));
-    }, 2000);
-    setTimeout(() => {
-      this.ws.send(JSON.stringify([1, 'message', { message: 'This message sent from Nataliia', sender: 'Nataliia' }]));
-      this.ws.send(JSON.stringify([1, 'stopTyping', { userName: 'Nataliia' }]));
-    }, 4000);
-    setTimeout(() => {
-      this.ws.send(JSON.stringify([1, 'message', { message: 'This message sent from Larisa', sender: 'Larisa' }]));
-      this.ws.send(JSON.stringify([1, 'stopTyping', { userName: 'Larisa' }]));
-    }, 5000);
+    await this.processMessage();
   }
 }

@@ -3,6 +3,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import useCookie from './useCookie';
 
 /**
  * @typedef {object} UseWebSocketsConfig

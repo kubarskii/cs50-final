@@ -1,6 +1,18 @@
 export const RoomService = {
-  async getMessagesInRoom(token, roomId) {
+  async getMessagesInRoom(token, roomId, signal) {
     const response = await fetch(`/rest/api/messages?roomId=${roomId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      signal,
+    });
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  },
+  async getUsersRooms(token) {
+    const response = await fetch('/rest/api/user/rooms', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -1,8 +1,8 @@
-/** @typedef {import('./abstract-message.js')} AbstractMessage */
+/** @typedef {import('./abstract-message.js')} BaseMessage */
 
 export default class MessageProcessor {
   /**
-     * @param {AbstractMessage} message
+     * @param {any} message
      * @return {void}
      * */
   process(message) {

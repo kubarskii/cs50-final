@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Header from '../components/head/header';
 import useCookie from '../hooks/useCookie';
 import { UserService } from '../services/user.service';
@@ -36,7 +37,6 @@ function LoginPage() {
 
   return (
     <>
-      <Header />
       <div className="page-wrapper bg-gra-03 p-t-45 p-b-50">
         <div className="wrapper wrapper--w790">
           <div className="card card-5">
@@ -59,12 +59,20 @@ function LoginPage() {
                   </div>
                 </div>
                 <div style={{ display: 'flex' }}>
+                  <Link href="/register" as="/register">
+                    <a
+                      className="btn btn--radius-2 btn--red"
+                      style={{ border: '1px solid #ccc' }}
+                    >
+                      Sign up
+                    </a>
+                  </Link>
                   <button
-                    style={{ marginLeft: 'auto' }}
+                    style={{ marginLeft: '12px', flex: 1 }}
                     className="btn btn--radius-2 btn--blue"
                     type="submit"
                   >
-                    Login
+                    Sign in
                   </button>
                 </div>
               </form>

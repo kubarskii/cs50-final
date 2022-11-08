@@ -1,3 +1,4 @@
+import URL from 'url';
 /**
  * @typedef {import('http').RequestListener} RequestListener
  * */
@@ -12,16 +13,20 @@ export default class Router {
   };
 
   /**
+   * @param {any} srv
    * @param {string} [basePath]
+   * @param {string} [interceptEvent]
    * */
-  constructor(srv, basePath = '') {
+  constructor(srv, basePath = '', interceptEvent = 'request') {
     this.srv = srv;
+    this.interceptEvent = interceptEvent;
     this.basePath = basePath;
     this.init();
   }
 
   init() {
-    this.srv.on('request', (req, res) => this.handleRouters(req, res));
+    const event = this.interceptEvent;
+    this.srv.on(event, (...args) => this.handleRouters(...args));
   }
 
   findHandler(method, url) {
@@ -40,20 +45,22 @@ export default class Router {
    * */
   async handleRouters(req, res) {
     const { url, method } = req;
-    const urlWithoutBasePath = url.replace(this.basePath, '');
+    const { pathname } = URL.parse(url);
+    const urlWithoutBasePath = pathname.replace(this.basePath, '');
     const handler = this.findHandler(method, urlWithoutBasePath);
-    handler(req, res);
+    if (handler && typeof handler === 'function') handler(req, res);
   }
 
   parseUrl(uri) {
-    const rule = uri
+    const { pathname } = URL.parse(uri);
+    const rule = pathname
       .replace(/([\\\/\-\_\.])/g, '\\$1')
       .replace(/\{[a-zA-Z]+\}/g, '(:any)')
       .replace(/\:any/g, '[\\w\\-\\_\\.]+')
       .replace(/\:word/g, '[a-zA-Z]+')
       .replace(/\:num/g, '\\d+');
     return {
-      route: uri,
+      route: pathname,
       reg: new RegExp(`^${rule}$`, 'i'),
     };
   }

@@ -27,7 +27,7 @@ export default React.memo((props) => {
 
   const UserMessage = useCallback(() => (
     <div className={[styles.message, styles.userMessage, tail].join(' ')}>
-      <p className={styles.messageText} aria-label="User message">{text}</p>
+      <p className={styles.messageText} aria-label="User value">{text}</p>
       {needTail
           && (
           <svg className={styles.tailSvg} viewBox="1.206 1.675 70.253 89.665" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +49,7 @@ export default React.memo((props) => {
         {loading ? (
           <div className={styles['dot-elastic']} />
         ) : (
-          <p className={styles.messageText} aria-label="Bot message">{text}</p>
+          <p className={styles.messageText} aria-label="Bot value">{text}</p>
         )}
         {needTail
             && (

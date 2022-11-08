@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ChatbotControls from '../core/chatbot-controls/chatbot-controls';
 
 export const ControlsContext = React.createContext(
@@ -6,8 +6,14 @@ export const ControlsContext = React.createContext(
 );
 
 export function ControlsProvider(props) {
-  const { inputDisabled = false, isOnline = true, children } = props;
-  const observer = useRef(new ChatbotControls({ inputDisabled, isOnline }));
+  const {
+    children,
+    isOnline = true,
+    inputDisabled = false,
+    inputShown = false,
+  } = props;
+  const observer = useRef(new ChatbotControls({ inputDisabled, isOnline, inputShown }));
+
   return (
     <ControlsContext.Provider
       value={observer.current}

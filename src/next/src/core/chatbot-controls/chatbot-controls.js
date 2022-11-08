@@ -64,6 +64,20 @@ export default class ChatbotControls extends Observable {
     });
   }
 
+  hideInput() {
+    this.next({
+      ...this.value,
+      inputShown: false,
+    });
+  }
+
+  showInput() {
+    this.next({
+      ...this.value,
+      inputShown: true,
+    });
+  }
+
   setCurrentRoom(roomId) {
     this.next({
       ...this.value,

@@ -18,11 +18,11 @@ export default class Observable {
     this.$value = v;
   }
 
-  next(v) {
-    this.value = v;
+  next(value) {
     this.subscriptions.forEach((fn) => {
-      fn(this.value);
+      fn(value);
     });
+    this.$value = value;
   }
 
   /**

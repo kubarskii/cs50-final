@@ -37,6 +37,7 @@ export default function RouteGuard({ children }) {
         query: { returnUrl: router.asPath },
       });
     } else {
+      // router.push('/');
       setAuthorized(true);
     }
   }

@@ -9,7 +9,7 @@
 /**
  * BaseMessage payload passed in MessageDTO as a last parameter
  * @typedef {object} MessagePayload
- * @property {string} [message] plain text sent by users/server
+ * @property {string} [value] plain text sent by users/server
  * @property {string | number} [chatId]
  * @property {string} [messageId]
  * @property {MessageErrorType} [errorType]
@@ -19,12 +19,12 @@
 
 /**
  * @typedef { 1 | 2 | 3 | 4 } MessageType
- * 1 - client message, 2 - server message, 3 - client error, 4 - server error;
+ * 1 - client value, 2 - server value, 3 - client error, 4 - server error;
  * */
 
 /**
- *   @typedef { "message" | "command" | "typing" | "system" | "stopTyping" } MessageCommand
- * command - can be used for chatbots, message - default value;
+ *   @typedef { "value" | "command" | "typing" | "system" | "stopTyping" } MessageCommand
+ * command - can be used for chatbots, value - default value;
  * /
 
  /**

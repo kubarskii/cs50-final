@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const SECRET_KEY = 'some-secret-key';
+export const SECRET_KEY = 'some-secret-key';
 
 export const JWT = {
   generateJWTForUser(user) {

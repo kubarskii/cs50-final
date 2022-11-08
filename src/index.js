@@ -2,12 +2,10 @@ import http from 'http';
 import cluster from 'cluster';
 import winston from 'winston';
 import net from 'net';
-import url from 'url';
 import { runNext } from './next';
 import runWS from './ws';
 import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants';
 import { proxy } from './reverse-proxy';
-import { routes } from './rest/router';
 import Router from './lib/router';
 import { UserController } from './rest/controllers/user.controller';
 import { RoomController } from './rest/controllers/room.controller';
@@ -62,10 +60,8 @@ const services = {
     router.post('/user', UserController.register);
     router.delete('/user', UserController.delete);
     router.get('/user/rooms', RoomController.getRooms);
-
     router.post('/room', RoomController.createRoom);
     router.delete('/room', RoomController.deleteRoom);
-
     router.get('/messages', RoomController.getMessagesInRoom);
 
     runWS({ server: srv });

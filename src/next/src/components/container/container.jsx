@@ -1,10 +1,9 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import Header from '../header/header';
 import useChatbot from '../../hooks/useChatbot';
 import Footer from '../footer/footer';
 import BotMessage from '../message/message';
 import styles from './container.module.css';
-import { ControlsProvider } from '../../context/controls.context';
 
 export default function Container(props) {
   const {
@@ -62,25 +61,29 @@ export default function Container(props) {
       messagesListRef.current.scroll({ top: lastChild.offsetTop, behavior: 'smooth' });
       //  scrollTop = lastChild.offsetTop;
     });
-  }, [messagesListRef]);
+  }, [messagesListRef, initialMessages]);
 
   const scrollSmooth = useCallback(() => {
-    if (messagesListRef.current) {
-      // @ts-ignore
-      const yCoord = messagesListRef.current.lastChild.offsetTop;
-      // @ts-ignore
-      messagesListRef.current.scrollTo({
-        left: 0,
-        top: yCoord,
-        behavior: 'smooth',
-      });
-    }
-  }, [messagesListRef]);
+    setTimeout(() => {
+      if (messagesListRef.current) {
+        const yCoord = messagesListRef.current.lastChild.offsetTop;
+        messagesListRef.current.scrollTo({
+          left: 0,
+          top: yCoord,
+          behavior: 'smooth',
+        });
+      }
+    });
+  }, [messagesListRef, initialMessages]);
+
+  useEffect(() => {
+    messagesStore.update(initialMessages);
+    scrollSmooth();
+  }, [initialMessages]);
 
   return (
-    <ControlsProvider inputDisabled={inputDisabled} isOnline={isOnline}>
-      <div style={containerStyles}>
-        {(!!messagesStore && !!registry)
+    <div style={containerStyles}>
+      {(!!messagesStore && !!registry)
                     && (
                     <div
                       className={styles.mainContainer}
@@ -151,7 +154,6 @@ export default function Container(props) {
                       />
                     </div>
                     )}
-      </div>
-    </ControlsProvider>
+    </div>
   );
 }
