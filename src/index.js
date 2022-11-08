@@ -57,12 +57,14 @@ const services = {
     const srv = http.createServer(async () => {});
     const router = new Router(srv, '/rest/api');
     router.get('/user', UserController.login);
-    router.post('/user', UserController.register);
-    router.delete('/user', UserController.delete);
     router.get('/user/rooms', RoomController.getRooms);
-    router.post('/room', RoomController.createRoom);
-    router.delete('/room', RoomController.deleteRoom);
     router.get('/messages', RoomController.getMessagesInRoom);
+
+    router.post('/user', UserController.register);
+    router.post('/room', RoomController.createRoom);
+
+    router.delete('/room', RoomController.deleteRoom);
+    router.delete('/user', UserController.delete);
 
     runWS({ server: srv });
 

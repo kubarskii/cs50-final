@@ -90,15 +90,15 @@ function HomePage() {
         {!!rooms && !!rooms.length && (
           <div>
             {
-              rooms.map(({ id, name: roomName }) => (
+              rooms.map(({ id: roomId, name: roomName }) => (
                 <div
                   style={{
                     border: '1px solid #ccc',
                     height: '3rem',
                     cursor: 'pointer',
                   }}
-                  onPointerDown={() => onChatSelect(id)}
-                  key={id}
+                  onPointerDown={() => onChatSelect(roomId)}
+                  key={roomId}
                 >
                   {roomName}
                 </div>

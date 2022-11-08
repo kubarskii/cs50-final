@@ -29,6 +29,12 @@ export default class Room extends Base {
     return (rows.length) ? rows : null;
   }
 
+  async createRoom(creatorId, name) {
+    const sql = 'INSERT INTO rooms (name, creator_id) VALUES ($1, $2) RETURNING *';
+    const data = await this.db.query(sql, [name, creatorId]);
+    return data;
+  }
+
   async getUserRooms(userId) {
     const sql = `SELECT rooms.id, rooms.name
                      FROM rooms AS rooms

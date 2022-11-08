@@ -1,5 +1,8 @@
 # CS50x Final project - small messenger.
 
+## Install nvm
+https://github.com/coreybutler/nvm-windows
+
 ## Description
 
 This repo contains the last project for CS50x course. It consists of 3 main parts:
@@ -15,14 +18,13 @@ WS is used for messaging and instant update of the messages on UI side
 You can watch the presentation by visiting the link: <link here>
 
 ## Running
-1. go to ```src/db``` and check ```schema.sql```.
-2. Execute ```schema.sql``` to create db_schema (seed is created to be used with PostgresSQL)
+1. go to ```src/db``` and check ```schema.sql```, ```init.sql```.
+2. Execute ```init.sql``` to create db and user and ```schema.sql``` to create db_schema (seed is created to be used with PostgresSQL)
 3. Install dependencies with ```npm i```
 4. Run application ```npm start```
 
 By default, the application is running on PORT ```80```.
 
 ## Testing
-//TODO
-
+To run test ```npm run test```
 

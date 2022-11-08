@@ -86,7 +86,48 @@ export const RoomController = {
     res.end();
   }, // token, roomId
   async deleteRoom(req, res) {
+    const body = await getBody(req);
+    res.writeHead(500, 'Not implemented', DEFAULT_HEADERS);
+    res.write(JSON.stringify(body));
+    res.end();
   }, // token, roomId
   async createRoom(req, res) {
+    const body = await getBody(req);
+    const authHeader = req.headers.authorization;
+    checkHeader(req, res, authHeader);
+    const { type, payload: { id: creatorId } } = authHeaderParser(authHeader);
+    if (type.toLowerCase() !== 'bearer') {
+      res.writeHead(400, 'Invalid authorization header', DEFAULT_HEADERS);
+      res.end();
+      return;
+    }
+    /**
+     * userIds - array of user ids that should be added to room
+     * */
+    const { userIds, name: roomName = 'Test' } = body;
+    const { rows: createdRoomRows } = await room.createRoom(creatorId, roomName);
+    const { id: roomId } = createdRoomRows[0];
+    const errorsStack = [];
+    const addedUsers = [];
+    /**
+     * for each existing user, add
+     * */
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const userToAddId of [creatorId, ...userIds]) {
+      const { rows } = await user.getById(userToAddId);
+      if (!rows.length) {
+        errorsStack.push({ error: 'Unknown userId', userId: userToAddId });
+        // eslint-disable-next-line no-continue
+        continue;
+      }
+      await room.addUserToRoom(userToAddId, roomId)
+        .then(() => {
+          addedUsers.push(userToAddId);
+        })
+        .catch((e) => errorsStack.push({ error: e.message, userId: userToAddId }));
+    }
+    res.writeHead(201, 'Created', DEFAULT_HEADERS);
+    res.write(JSON.stringify({ errors: errorsStack, success: addedUsers }));
+    res.end();
   }, // token, roomName
 };

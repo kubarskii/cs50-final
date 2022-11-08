@@ -78,6 +78,10 @@ export const UserController = {
       res.end();
     }
   },
+  async forgotPassword(req, res) {
+    const body = getBody(req);
+    const { email } = body;
+  },
   async delete(req, res) {
     const authHeader = req.headers.authorization;
     const { type, payload: { id } } = authHeaderParser(authHeader);

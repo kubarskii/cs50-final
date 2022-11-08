@@ -30,7 +30,7 @@ export default class Base {
   }
 
   async create(record) {
-    this.db.create(record);
+    return this.db.create(record);
   }
 
   async read(id, record) {
