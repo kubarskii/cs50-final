@@ -54,7 +54,7 @@ export default class ServerMessage extends BaseMessage {
    * @param {MessageType} type
    * @param {string} roomId
    * */
-  async notifyUsers(type, roomId) {
+  async notifyUsers(type, roomId, createdAt) {
     /**
      * 1. Getting all users in the room
      * 2. Getting websockets of users
@@ -72,7 +72,12 @@ export default class ServerMessage extends BaseMessage {
     });
     const senderId = this.ws[UNIQUE_USER].id;
     Array.from(sockets).forEach((socket) => {
-      socket.send(JSON.stringify([type, 'message', { message: this.value[2].message, senderId, roomId }]));
+      socket.send(JSON.stringify([type, 'message', {
+        message: this.value[2].message,
+        senderId,
+        roomId,
+        createdAt,
+      }]));
     });
   }
 
@@ -94,8 +99,11 @@ export default class ServerMessage extends BaseMessage {
     if (!userId) return;
     const isUserInTheRoom = await room.isUserInRoom(userId, roomId);
     if (!isUserInTheRoom) return;
-    await messageModel.create({ user_id: userId, message: payloadMessage, room_id: roomId });
-    await this.notifyUsers(1, roomId);
+    const { rows: createdMessages } = await messageModel.create(
+      { user_id: userId, message: payloadMessage, room_id: roomId },
+    );
+    const { created_at: createdAt } = createdMessages[0];
+    await this.notifyUsers(1, roomId, createdAt);
   }
 
   async stopTyping() {

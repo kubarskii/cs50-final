@@ -47,7 +47,7 @@ const db = (table) => ({
     const fields = `"${keys.join('", "')}"`;
     const params = nums.join(', ');
     const sql = `INSERT INTO "${table}" (${fields})
-                     VALUES (${params})`;
+                     VALUES (${params}) RETURNING *`;
     return pool.query(sql, data);
   },
 
