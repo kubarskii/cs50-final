@@ -4,6 +4,7 @@ cert
 .idea
 dist
 */**/.next
+.vscode
 
 #files
 *.iml

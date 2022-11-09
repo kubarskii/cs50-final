@@ -1,21 +1,17 @@
-import React, {
-  useContext, useEffect, useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '../components/container/container';
 import InputWrapper from '../components/input-wrapper/input-wrapper.component';
 import useCookie from '../hooks/useCookie';
-import { JWT } from '../../../utils/jwt';
 import { RoomService } from '../services/room.service';
+import Sidebar from '../components/sidebar/sidebar';
 import { ControlsContext } from '../context/controls.context';
 
 function HomePage() {
   const [token] = useCookie('accessToken');
-  const decoded = JWT.decoderJWT(token);
-  const { name, surname, id } = decoded;
   const [rooms, setRooms] = useState([]);
-  const chatbotCtx = useContext(ControlsContext);
-
   const [messages, setMessages] = useState([]);
+  const chatbotCtx = React.useContext(ControlsContext);
+  const {roomName = "Message-ME"} = chatbotCtx.getCurrentRoom()
 
   useEffect(() => {
     RoomService.getUsersRooms(token)
@@ -25,88 +21,12 @@ function HomePage() {
       .catch(console.log);
   }, []);
 
-  const onChatSelect = (roomId) => {
-    chatbotCtx.setCurrentRoom(roomId);
-    chatbotCtx.showInput();
-
-    RoomService.getMessagesInRoom(token, roomId)
-      .then(({ messages: data }) => {
-        const preparedMessages = data.map((msg) => {
-          const {
-            id: messageId, message, user_id: userId,
-          } = msg;
-          return {
-            type: 'message',
-            sender: (userId.toString() === id) ? 'user' : 'bot',
-            props: { text: message },
-            uniqueId: messageId,
-          };
-        });
-        setMessages(preparedMessages);
-      })
-      .catch(console.log);
-  };
-
   return (
     <div style={{
       display: 'flex',
     }}
     >
-      <aside style={{
-        width: '100%',
-        maxWidth: '300px',
-        overflow: 'hidden',
-        flexShrink: 3,
-        borderRight: '1px solid #dfe1e5',
-      }}
-      >
-        <div style={{
-          alignItems: 'center',
-          display: 'flex',
-          height: '56px',
-          maxWidth: 'inherit',
-        }}
-        >
-          <div style={{
-            marginRight: '4px',
-            flexShrink: 0,
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            background: '#ccc',
-          }}
-          />
-          <h3 style={{
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
-          >
-            {name}
-            {' '}
-            {surname}
-          </h3>
-        </div>
-        {!!rooms && !!rooms.length && (
-          <div>
-            {
-              rooms.map(({ id: roomId, name: roomName }) => (
-                <div
-                  style={{
-                    border: '1px solid #ccc',
-                    height: '3rem',
-                    cursor: 'pointer',
-                  }}
-                  onPointerDown={() => onChatSelect(roomId)}
-                  key={roomId}
-                >
-                  {roomName}
-                </div>
-              ))
-            }
-          </div>
-        )}
-      </aside>
+      <Sidebar rooms={rooms} setMessages={setMessages} />
       <div style={{
         height: '100vh',
         width: '100%',
@@ -122,7 +42,7 @@ function HomePage() {
               margin: '0 auto',
             },
             header: {
-              title: 'Message-ME',
+              title: `${roomName}`,
               logoStyles: {
                 marginRight: '6px',
               },

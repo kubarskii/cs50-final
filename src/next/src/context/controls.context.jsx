@@ -11,8 +11,9 @@ export function ControlsProvider(props) {
     isOnline = true,
     inputDisabled = false,
     inputShown = false,
+    currentRoom = {},
   } = props;
-  const observer = useRef(new ChatbotControls({ inputDisabled, isOnline, inputShown }));
+  const observer = useRef(new ChatbotControls({ inputDisabled, isOnline, inputShown, currentRoom }));
 
   return (
     <ControlsContext.Provider

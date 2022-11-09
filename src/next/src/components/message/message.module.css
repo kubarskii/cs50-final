@@ -118,6 +118,7 @@ p.messageText {
     padding: 0.5rem .875rem;
     position: relative;
     word-wrap: break-word;
+    word-break: break-word;
     margin: 0.5rem 0;
     display: flex;
     box-sizing: border-box;
@@ -143,6 +144,16 @@ p.messageText {
 
 .userMessage ~ .userMessage:last-child {
     margin-bottom: 0.5rem;
+}
+
+.timeText{
+    font-size: 0.6rem;
+    margin: 0 0 0 5px;
+    display: flex;
+    flex-shrink: 0;
+    align-content: flex-end;
+    align-items: flex-end;
+    color: #000000A0;
 }
 
 .botMessage {

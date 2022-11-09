@@ -1,0 +1,52 @@
+.asideComponent {
+    width: 100%;
+    max-width: 300px;
+    overflow: hidden;
+    flex-shrink: 3;
+    border-right: 1px solid #dfe1e5;
+}
+
+.userInfoContainer{
+    align-items: center;
+    display: flex;
+    height: 56px;
+    max-width: inherit;
+}
+
+.userAvatar {
+    margin-right: 4px;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+}
+
+.userName {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.roomComponent {
+    display: flex;
+    box-sizing: border-box;
+    height: 3rem;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    margin: 0 0.3rem;
+    font-weight: bold;
+    align-items: center;
+    padding: 0.5rem;
+}
+
+.roomComponent:hover {
+    cursor: pointer;
+    background-color: hsl(240deg 5% 96%);
+}
+
+.roomComponent.selected {
+    background-color: rgb(51 144 236);
+    color: #fff;
+}

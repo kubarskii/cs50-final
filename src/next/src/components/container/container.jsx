@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import Header from '../header/header';
 import useChatbot from '../../hooks/useChatbot';
 import Footer from '../footer/footer';
-import BotMessage from '../message/message';
+import ChatMessage from '../message/message';
 import styles from './container.module.css';
 
 export default function Container(props) {
@@ -122,7 +122,7 @@ export default function Container(props) {
                           className={styles.container}
                         >
                           {messages.map((el, index) => (
-                            <BotMessage
+                            <ChatMessage
                               key={el.uniqueId}
                               needTail={el.sender !== messages[index + 1]?.sender}
                               messagesStore={messagesStore}
