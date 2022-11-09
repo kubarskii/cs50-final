@@ -82,6 +82,12 @@ export const UserController = {
     const body = getBody(req);
     const { email } = body;
   },
+  /**
+   * Used to search users by login, name, surname, email or phone
+   * */
+  async findUserByInput() {
+
+  },
   async delete(req, res) {
     const authHeader = req.headers.authorization;
     const { type, payload: { id } } = authHeaderParser(authHeader);

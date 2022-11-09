@@ -81,7 +81,8 @@ CREATE TABLE messages
     message     text    NOT NULL,
     receiver_id integer   DEFAULT NULL, -- just to highlight user
     room_id     integer NOT NULL,
-    created_at  timestamp DEFAULT now() -- works in PG
+    created_at  timestamp DEFAULT now(), -- works in PG
+    read        boolean DEFAULT FALSE
 );
 
 ALTER TABLE messages

@@ -4,7 +4,6 @@ import Room from '../../models/room';
 import db from '../../lib/db';
 import Message from '../../models/message';
 import { UNIQUE_USER } from '../constants';
-import { findUsersInClients } from '../utils';
 
 const room = new Room(db);
 const messageModel = new Message(db);
