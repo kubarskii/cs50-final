@@ -54,11 +54,11 @@ export default function Container(props) {
 
   const messagesListRef = useRef(null);
 
-  const scrollToLast = useCallback(() => {
+  const scrollToLast = useCallback((behavior = 'smooth') => {
     setTimeout(() => {
       const lastChild = messagesListRef.current?.firstElementChild?.lastElementChild;
       if (!lastChild || !messagesListRef.current) return;
-      messagesListRef.current.scroll({ top: lastChild.offsetTop, behavior: 'smooth' });
+      messagesListRef.current.scroll({ top: lastChild.offsetTop, behavior });
       //  scrollTop = lastChild.offsetTop;
     });
   }, [messagesListRef, initialMessages]);
@@ -78,82 +78,82 @@ export default function Container(props) {
 
   useEffect(() => {
     messagesStore.update(initialMessages);
-    scrollSmooth();
+    scrollToLast(undefined);
   }, [initialMessages]);
 
   return (
     <div style={containerStyles}>
       {(!!messagesStore && !!registry)
-                    && (
+                && (
+                <div
+                  className={styles.mainContainer}
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Header
+                    onClose={onClose}
+                    headerStyles={headerStyles}
+                    controlContainerStyles={controlContainerStyles}
+                    controlsStyle={controlsStyle}
+                    logo={logo}
+                    showX={showX}
+                    imgSrc={imgSrc}
+                    logoStyles={logoStyles}
+                    logoContainerStyle={logoContainerStyle}
+                    custom={custom}
+                    title={title}
+                    titleStyle={titleStyle}
+                    controls={controls}
+                  />
+                  <div
+                    style={{
+                      overflowY: 'overlay',
+                      display: 'flex',
+                      flex: 1,
+                      // scrollBehavior: 'smooth',
+                    }}
+                    ref={messagesListRef}
+                  >
                     <div
-                      className={styles.mainContainer}
-                      style={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
+                      style={messagesListStyle}
+                      className={styles.container}
                     >
-                      <Header
-                        onClose={onClose}
-                        headerStyles={headerStyles}
-                        controlContainerStyles={controlContainerStyles}
-                        controlsStyle={controlsStyle}
-                        logo={logo}
-                        showX={showX}
-                        imgSrc={imgSrc}
-                        logoStyles={logoStyles}
-                        logoContainerStyle={logoContainerStyle}
-                        custom={custom}
-                        title={title}
-                        titleStyle={titleStyle}
-                        controls={controls}
-                      />
-                      <div
-                        style={{
-                          overflowY: 'overlay',
-                          display: 'flex',
-                          flex: 1,
-                          scrollBehavior: 'smooth',
-                        }}
-                        ref={messagesListRef}
-                      >
-                        <div
-                          style={messagesListStyle}
-                          className={styles.container}
-                        >
-                          {messages.map((el, index) => (
-                            <ChatMessage
-                              key={el.uniqueId}
-                              needTail={el.sender !== messages[index + 1]?.sender}
-                              messagesStore={messagesStore}
-                              widgetsRegistry={registry}
-                              type={el.type}
-                              sender={el.sender}
-                              props={el.props}
-                              scroll={scrollSmooth}
-                              uniqueId={el.uniqueId}
-                              currentMessage={messagesStore.getMessage(el.uniqueId)}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <Footer
-                        containerStyles={footerContainerStyles}
-                        inputWrapperStyles={inputWrapperStyles}
-                        InputWrapper={InputWrapper}
-                        scroll={scrollToLast}
-                        placeholder={placeholder}
-                        maxConcurrentRequests={maxConcurrentRequests}
-                        right={right}
-                        left={left}
-                        inputParser={inputParser}
-                        buttonStyles={buttonStyles}
-                        buttonTitle={buttonTitle}
-                        messageParser={messageParser}
-                        messagesStore={messagesStore}
-                      />
+                      {messages.map((el, index) => (
+                        <ChatMessage
+                          key={el.uniqueId}
+                          needTail={el.sender !== messages[index + 1]?.sender}
+                          messagesStore={messagesStore}
+                          widgetsRegistry={registry}
+                          type={el.type}
+                          sender={el.sender}
+                          props={el.props}
+                          scroll={scrollToLast}
+                          uniqueId={el.uniqueId}
+                          currentMessage={messagesStore.getMessage(el.uniqueId)}
+                        />
+                      ))}
                     </div>
-                    )}
+                  </div>
+                  <Footer
+                    containerStyles={footerContainerStyles}
+                    inputWrapperStyles={inputWrapperStyles}
+                    InputWrapper={InputWrapper}
+                    scroll={scrollToLast}
+                    placeholder={placeholder}
+                    maxConcurrentRequests={maxConcurrentRequests}
+                    right={right}
+                    left={left}
+                    inputParser={inputParser}
+                    buttonStyles={buttonStyles}
+                    buttonTitle={buttonTitle}
+                    messageParser={messageParser}
+                    messagesStore={messagesStore}
+                  />
+                </div>
+                )}
     </div>
   );
 }
