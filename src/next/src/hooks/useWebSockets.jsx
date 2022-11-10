@@ -1,9 +1,8 @@
 import {
   useCallback,
-  useEffect,
+  useEffect, useRef,
   useState,
 } from 'react';
-import useCookie from './useCookie';
 
 /**
  * @typedef {object} UseWebSocketsConfig
@@ -17,18 +16,29 @@ import useCookie from './useCookie';
 export default function useWebSockets(config) {
   const { url, protocols = [], onMessage = (() => undefined) } = config;
 
-  const [connection, setConnection] = useState(null);
+  const connectionRef = useRef(null);
   const [error, setError] = useState('');
+  const [webSocket, setWebSocket] = useState(null);
 
-  const reconnect = useCallback(() => {
-    if (connection instanceof WebSocket) {
-      connection.removeAllListeners();
-      connection.close();
-      const wss = new WebSocket(url, protocols);
-      wss.addEventListener('message', onMessage);
-      setConnection(wss);
+  const connect = () => {
+    if (connectionRef.current instanceof WebSocket) {
+      const connection = connectionRef.current;
+      // eslint-disable-next-line no-multi-assign
+      connection.onopen = connection.onclose = connection.onerror = null;
     }
-  }, [connection]);
+    const wss = new WebSocket(url, protocols);
+    wss.addEventListener('message', onMessage);
+    wss.addEventListener('close', () => {
+      setWebSocket(null);
+      setTimeout(() => {
+        connect();
+      }, 1000);
+    });
+    wss.addEventListener('open', () => {
+      setWebSocket(wss);
+    });
+    connectionRef.current = wss;
+  };
 
   const waitForOpenConnection = (socket) => new Promise((resolve, reject) => {
     socket.addEventListener('open', openListener);
@@ -48,6 +58,7 @@ export default function useWebSockets(config) {
   });
 
   const sendMessage = async (msg) => {
+    const connection = connectionRef.current;
     if (!connection) {
       console.error('no ws connection');
       return;
@@ -65,25 +76,17 @@ export default function useWebSockets(config) {
   };
 
   useEffect(() => {
-    const wss = new WebSocket(url, protocols);
-    setConnection(wss);
-    wss.addEventListener('message', onMessage);
-    wss.addEventListener('close', (e) => {
-      if (e.code > 1000) {
-        reconnect();
-      }
-    });
-
+    connect();
     return () => {
+      const connection = connectionRef.current;
       if (connection instanceof WebSocket) {
         connection.close(1000, 'Unmount occurred');
-        connection.removeAllListeners();
       }
     };
   }, []);
 
   return {
-    webSocket: connection,
+    webSocket,
     sendMessage,
     error,
   };

@@ -1,6 +1,7 @@
 import React, {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import styles from './input-wrapper.module.css';
 import useWebSockets from '../../hooks/useWebSockets';
 import { ControlsContext } from '../../context/controls.context';
@@ -75,23 +76,36 @@ export default function InputWrapper(props) {
   }, []);
 
   const [token] = useCookie('accessToken', '');
-  const ws = useWebSockets({
-    url: `ws://localhost/ws/api?token=${token}`,
-    onMessage,
-  });
-
-  const inputParser = useCallback(
-    async (message) => {
-      const { roomId } = ctx.value.currentRoom;
-      messagesStore?.add({
-        type: 'message',
-        sender: 'user',
-        props: { text: message },
-      });
-      ws.sendMessage(JSON.stringify([1, 'message', { message, roomId }]));
-    },
-    [ws],
+  const { sendMessage, readyState } = useWebSocket(
+    `ws://localhost/ws/api?token=${token}`,
+    { onMessage, shouldReconnect: () => true },
   );
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
+
+  useEffect(() => {
+    if (readyState > ReadyState.OPEN) {
+      ctx.disableInput();
+    } else {
+      ctx.enableInput();
+    }
+  }, [readyState]);
+
+  const inputParser = async (message) => {
+    const { roomId } = ctx.value.currentRoom;
+    messagesStore?.add({
+      type: 'message',
+      sender: 'user',
+      props: { text: message },
+    });
+    sendMessage(JSON.stringify([1, 'message', { message, roomId }]));
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();

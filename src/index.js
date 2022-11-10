@@ -23,6 +23,16 @@ const services = {
   const logger = new winston.createLogger(winstonOptions);
 
   if (cluster.isPrimary || cluster.isMaster) {
+    const started = {
+      REST: false,
+      NEXT: false,
+    };
+    const tcpServer = net.createServer(proxy);
+    tcpServer.on('error', (err) => logger.error(err.message));
+    tcpServer.on('close', () => {
+      logger.info('connection closed');
+    });
+
     const servicesEntries = Object.entries(services);
     for (let i = 0; i < servicesEntries.length; i += 1) {
       const worker = cluster.fork({ CHILD_PROCESS_NAME: servicesEntries[i][0] });
@@ -35,21 +45,27 @@ const services = {
           logger.info('worker success!');
         }
       });
-    }
 
-    const tcpServer = net.createServer(proxy);
-    tcpServer.on('error', (err) => logger.error(err.message));
-    tcpServer.on('close', () => {
-      logger.info('connection closed');
-    });
-    tcpServer.listen({ host: '127.0.0.1', port: LB_PORT }, () => {
-      logger.info(`TCP Server is running on ${LB_PORT}`);
-    });
+      worker.on('message', (msg) => {
+        if (msg?.workerName === 'NEXT') {
+          started.NEXT = true;
+        }
+        if (msg?.workerName === 'REST') {
+          started.REST = true;
+        }
+        if (started.REST && started.NEXT) {
+          tcpServer.listen({ host: '127.0.0.1', port: LB_PORT }, () => {
+            logger.info(`TCP Server is running on ${LB_PORT}`);
+          });
+        }
+      });
+    }
   }
 
   if (process.env.CHILD_PROCESS_NAME === 'NEXT') {
     /** build first to run production version */
     await runNext({ dev: true }, NEXT_PORT);
+    process.send({ workerName: process.env.CHILD_PROCESS_NAME });
     logger.info(`NEXT is running on ${NEXT_PORT}`);
   }
 
@@ -70,6 +86,7 @@ const services = {
 
     srv.listen(REST_API_PORT, () => {
       logger.info(`REST is running on ${REST_API_PORT}`);
+      process.send({ workerName: process.env.CHILD_PROCESS_NAME });
     });
   }
 }());
