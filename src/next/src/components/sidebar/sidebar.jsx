@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
@@ -13,7 +13,17 @@ export default function Sidebar(props) {
   const { name, surname, id: userId } = decoded;
   const { rooms, setMessages } = props;
   const chatbotCtx = React.useContext(ControlsContext);
-  const { roomId: currentRoomId } = chatbotCtx.getCurrentRoom();
+  const [currentRoomId, setCurrentRoomId] = useState(chatbotCtx.getCurrentRoom());
+
+  useEffect(() => {
+    const unsubscribe = chatbotCtx.subscribe((value) => {
+      const { currentRoom: { roomId } } = value;
+      setCurrentRoomId(roomId);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <aside className={styles.asideComponent}>

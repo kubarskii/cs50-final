@@ -1,13 +1,19 @@
-import React from "react";
-import { ControlsContext } from "../../context/controls.context";
-import { RoomService } from "../../services/room.service";
-import useCookie from "../../hooks/useCookie";
-import styles from "./sidebar.module.css";
+import React, { useEffect } from 'react';
+import { ControlsContext } from '../../context/controls.context';
+import { RoomService } from '../../services/room.service';
+import useCookie from '../../hooks/useCookie';
+import styles from './sidebar.module.css';
 
 export default function Room(props) {
-  const [token] = useCookie("accessToken");
+  const [token] = useCookie('accessToken');
   const chatbotCtx = React.useContext(ControlsContext);
-  const { roomId, roomName, userID: id, setMessages, isSelected } = props;
+  const {
+    roomId,
+    roomName,
+    userID: id,
+    setMessages,
+    isSelected,
+  } = props;
 
   const onChatSelect = (roomId, roomName) => {
     chatbotCtx.setCurrentRoom({ roomId, roomName });
@@ -23,8 +29,8 @@ export default function Room(props) {
             created_at: createdAt,
           } = msg;
           return {
-            type: "message",
-            sender: userId.toString() === id ? "user" : "bot",
+            type: 'message',
+            sender: userId.toString() === id ? 'user' : 'bot',
             props: { text: message, date: createdAt },
             uniqueId: messageId,
           };
@@ -35,9 +41,7 @@ export default function Room(props) {
   };
   return (
     <div
-      className={[isSelected ? styles.selected : "", styles.roomComponent].join(
-        " "
-      )}
+      className={[isSelected ? styles.selected : '', styles.roomComponent].join(' ')}
       onPointerDown={() => onChatSelect(roomId, roomName)}
       key={roomId}
     >

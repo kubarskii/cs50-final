@@ -11,7 +11,7 @@ function HomePage() {
   const [rooms, setRooms] = useState([]);
   const [messages, setMessages] = useState([]);
   const chatbotCtx = React.useContext(ControlsContext);
-  const {roomName = "Message-ME"} = chatbotCtx.getCurrentRoom()
+  const { roomName = 'Message-ME' } = chatbotCtx.getCurrentRoom();
 
   useEffect(() => {
     RoomService.getUsersRooms(token)
