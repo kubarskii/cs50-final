@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useEffect, useMemo, useState,
+} from 'react';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
@@ -6,6 +8,7 @@ import { JWT } from '../../../../utils/jwt';
 import UserInfo from './user-info';
 import Room from './room';
 import { ControlsContext } from '../../context/controls.context';
+import debounce from '../../utils/debounce';
 
 export default function Sidebar(props) {
   const [token] = useCookie('accessToken');
@@ -25,9 +28,16 @@ export default function Sidebar(props) {
     };
   }, []);
 
+  const onChange = (e) => {
+    console.log(e.target.value);
+  };
+
+  const handler = useMemo(() => debounce(onChange, 300), [token]);
+
   return (
     <aside className={styles.asideComponent}>
       <UserInfo name={name} surname={surname} />
+      <input type="text" placeholder="search" onChange={(e) => handler(e)} />
 
       {!!rooms && !!rooms.length && (
         <div>
