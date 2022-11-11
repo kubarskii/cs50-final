@@ -16,7 +16,7 @@ function HomePage(props) {
   const [hostname, port = 80] = host.split(':');
 
   // eslint-disable-next-line react/jsx-props-no-spreading,no-shadow
-  const wrapper = useCallback((props) => <InputWrapper {...props} port={port} />, [port]);
+  const wrapper = useCallback((props) => <InputWrapper {...props} port={port} hostname={hostname} />, [port]);
 
   const [token] = useCookie('accessToken');
   const [rooms, setRooms] = useState([]);

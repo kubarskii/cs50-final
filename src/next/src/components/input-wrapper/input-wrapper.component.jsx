@@ -37,6 +37,7 @@ export default function InputWrapper(props) {
     scroll,
     botControls,
     port,
+    hostname,
   } = props;
 
   const ctx = useContext(ControlsContext);
@@ -80,7 +81,7 @@ export default function InputWrapper(props) {
 
   const [token] = useCookie('accessToken', '');
   const { sendMessage, readyState } = useWebSocket(
-    `ws://localhost:${port}/ws/api?token=${token}`,
+    `ws://${hostname}:${port}/ws/api?token=${token}`,
     { onMessage, shouldReconnect: () => true },
   );
 
