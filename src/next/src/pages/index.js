@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Container from '../components/container/container';
 import InputWrapper from '../components/input-wrapper/input-wrapper.component';
 import useCookie from '../hooks/useCookie';
@@ -6,7 +6,18 @@ import { RoomService } from '../services/room.service';
 import Sidebar from '../components/sidebar/sidebar';
 import { ControlsContext } from '../context/controls.context';
 
-function HomePage() {
+export async function getServerSideProps(context) {
+  const { headers: host } = context.req;
+  return { props: { host: host.host } };
+}
+
+function HomePage(props) {
+  const { host } = props;
+  const [hostname, port = 80] = host.split(':');
+
+  // eslint-disable-next-line react/jsx-props-no-spreading,no-shadow
+  const wrapper = useCallback((props) => <InputWrapper {...props} port={port} />, [port]);
+
   const [token] = useCookie('accessToken');
   const [rooms, setRooms] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -107,7 +118,7 @@ function HomePage() {
                 backgroundColor: '#fff',
                 marginRight: '8px',
               },
-              InputWrapper,
+              InputWrapper: wrapper,
             },
           }}
         />

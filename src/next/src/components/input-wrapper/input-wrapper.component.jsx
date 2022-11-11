@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import styles from './input-wrapper.module.css';
-import useWebSockets from '../../hooks/useWebSockets';
 import { ControlsContext } from '../../context/controls.context';
 import useCookie, { getCookie } from '../../hooks/useCookie';
 import { JWT } from '../../../../utils/jwt';
@@ -33,7 +32,11 @@ const addMessage = (parsedData, messagesStore, currentRoom) => {
 
 export default function InputWrapper(props) {
   const {
-    Original, messagesStore, scroll, botControls,
+    Original,
+    messagesStore,
+    scroll,
+    botControls,
+    port,
   } = props;
 
   const ctx = useContext(ControlsContext);
@@ -77,7 +80,7 @@ export default function InputWrapper(props) {
 
   const [token] = useCookie('accessToken', '');
   const { sendMessage, readyState } = useWebSocket(
-    `ws://localhost/ws/api?token=${token}`,
+    `ws://localhost:${port}/ws/api?token=${token}`,
     { onMessage, shouldReconnect: () => true },
   );
 

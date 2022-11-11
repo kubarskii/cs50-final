@@ -15,7 +15,7 @@ export default function Room(props) {
     isSelected,
   } = props;
 
-  const onChatSelect = (roomId, roomName) => {
+  const onChatSelect = async (roomId, roomName) => {
     if (roomId === chatbotCtx.getCurrentRoom()?.roomId) return;
     chatbotCtx.setCurrentRoom({ roomId, roomName });
     chatbotCtx.showInput();

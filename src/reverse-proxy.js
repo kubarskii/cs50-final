@@ -36,6 +36,7 @@ export const proxy = (socket) => {
     const connection = (protocol === PROTOCOLS.WS && cachedSocket)
       ? cachedSocket
       : client.connect({ ...config });
+
     const socketMeta = {
       url: parsedBuffer?.url,
       port,
