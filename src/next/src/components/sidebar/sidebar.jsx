@@ -1,6 +1,4 @@
-import React, {
-  useEffect, useMemo, useState,
-} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
@@ -9,6 +7,7 @@ import UserInfo from './user-info';
 import Room from './room';
 import { ControlsContext } from '../../context/controls.context';
 import debounce from '../../utils/debounce';
+import { UserService } from '../../services/user.service';
 
 export default function Sidebar(props) {
   const [token] = useCookie('accessToken');
@@ -28,8 +27,12 @@ export default function Sidebar(props) {
     };
   }, []);
 
-  const onChange = (e) => {
-    console.log(e.target.value);
+  const onChange = async (e) => {
+    const searchString = e.target.value;
+    if (searchString.length >= 2) {
+      const res = await UserService.findUser(token, searchString);
+      console.log(res);
+    }
   };
 
   const handler = useMemo(() => debounce(onChange, 300), [token]);

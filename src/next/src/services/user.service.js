@@ -38,4 +38,15 @@ export const UserService = {
     }
     throw new Error(response.statusText);
   },
+  async findUser(token, str) {
+    const response = await fetch(`/rest/api/user/search?q=${str}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  },
 };
