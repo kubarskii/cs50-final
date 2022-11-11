@@ -74,6 +74,7 @@ const services = {
     const router = new Router(srv, '/rest/api');
     router.get('/user', UserController.login);
     router.get('/user/rooms', RoomController.getRooms);
+    router.get('/user/search', UserController.findUserByInput);
     router.get('/messages', RoomController.getMessagesInRoom);
 
     router.post('/user', UserController.register);

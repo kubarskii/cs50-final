@@ -19,7 +19,7 @@ const addUserToRoomSchema = {
   },
 };
 
-function checkHeader(req, res, authHeader) {
+export function checkHeader(req, res, authHeader) {
   if (!authHeader) {
     res.writeHead(403, 'Unauthorized', DEFAULT_HEADERS);
     res.end();
@@ -65,10 +65,13 @@ export const RoomController = {
     if (user1.rows.length && user2.rows.length) {
       await room.addUserToRoom(userId, roomId);
       await room.addUserToRoom(toAdd, roomId);
+      res.writeHead(201, 'Created', DEFAULT_HEADERS);
+      res.end();
     } else {
-
+      res.writeHead(500);
+      res.end();
     }
-  }, // token, roomId
+  },
   async getMessagesInRoom(req, res) {
     const authHeader = req.headers.authorization;
     checkHeader(req, res, authHeader);

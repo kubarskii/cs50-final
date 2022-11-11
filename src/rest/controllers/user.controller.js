@@ -1,3 +1,4 @@
+import URL from 'url';
 import User from '../../models/user';
 import db from '../../lib/db';
 import { JWT } from '../../utils/jwt';
@@ -5,6 +6,8 @@ import { getBody } from '../../utils/getBody';
 import { validateSchema } from '../../lib/schema-validator';
 import { DEFAULT_HEADERS } from '../../constants';
 import authHeaderParser from '../../next/src/utils/auth-header-parser';
+import { checkHeader } from './room.controller';
+import parseQuery from '../../utils/queryParser';
 
 const userSchema = {
   type: 'object',
@@ -85,8 +88,27 @@ export const UserController = {
   /**
    * Used to search users by login, name, surname, email or phone
    * */
-  async findUserByInput() {
-
+  async findUserByInput(req, res) {
+    const MIN_QUERY_LENGTH = 2;
+    const authHeader = req.headers.authorization;
+    checkHeader(req, res, authHeader);
+    const { type } = authHeaderParser(authHeader);
+    if (type.toLowerCase() !== 'bearer') {
+      res.writeHead(400, 'Invalid token', DEFAULT_HEADERS);
+      res.end();
+    }
+    const { query } = URL.parse(req.url);
+    const { q } = parseQuery(query);
+    const decodedQ = decodeURI(q);
+    if (!q || decodedQ.length < MIN_QUERY_LENGTH) {
+      res.writeHead(200, 'Success', DEFAULT_HEADERS);
+      res.write(JSON.stringify({ foundUsers: [] }));
+      res.end();
+    }
+    const foundUsers = await user.findUserFTC(decodedQ);
+    res.writeHead(200, 'Success', DEFAULT_HEADERS);
+    res.write(JSON.stringify({ foundUsers }));
+    res.end();
   },
   async delete(req, res) {
     const authHeader = req.headers.authorization;
