@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
@@ -8,6 +9,14 @@ import Room from './room';
 import { ControlsContext } from '../../context/controls.context';
 import debounce from '../../utils/debounce';
 import { UserService } from '../../services/user.service';
+
+Sidebar.propTypes = {
+  rooms: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+  })).isRequired,
+  setMessages: PropTypes.func.isRequired,
+};
 
 export default function Sidebar(props) {
   const [token] = useCookie('accessToken');
@@ -50,7 +59,7 @@ export default function Sidebar(props) {
               roomId={roomId}
               roomName={roomName}
               setMessages={setMessages}
-              userID={userId}
+              userId={userId}
               key={roomId}
             />
           ))}
@@ -58,9 +67,10 @@ export default function Sidebar(props) {
       )}
 
       <button
+        type="submit"
         style={{ width: '100%', border: '1px solid black' }}
         onClick={async () => {
-          const res = await RoomService.createRoom(token, {
+          await RoomService.createRoom(token, {
             userIds: [2],
             name: 'nut',
           });

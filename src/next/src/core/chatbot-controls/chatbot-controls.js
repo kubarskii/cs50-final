@@ -78,10 +78,10 @@ export default class ChatbotControls extends Observable {
     });
   }
 
-  setCurrentRoom({roomId, roomName}) {
+  setCurrentRoom({ roomId, roomName }) {
     this.next({
       ...this.value,
-      currentRoom: {roomId, roomName},
+      currentRoom: { roomId, roomName },
     });
   }
 

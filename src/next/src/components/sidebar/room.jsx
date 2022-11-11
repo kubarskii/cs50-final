@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ControlsContext } from '../../context/controls.context';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
@@ -10,12 +10,13 @@ export default function Room(props) {
   const {
     roomId,
     roomName,
-    userID: id,
+    userId: id,
     setMessages,
     isSelected,
   } = props;
 
   const onChatSelect = (roomId, roomName) => {
+    if (roomId === chatbotCtx.getCurrentRoom()?.roomId) return;
     chatbotCtx.setCurrentRoom({ roomId, roomName });
     chatbotCtx.showInput();
 
