@@ -81,6 +81,9 @@ export const UserController = {
       res.end();
     }
   },
+  /**
+   * TODO
+   * */
   async forgotPassword(req, res) {
     const body = getBody(req);
     const { email } = body;

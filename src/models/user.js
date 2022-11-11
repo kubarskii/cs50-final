@@ -23,7 +23,7 @@ export default class User extends Base {
     * Bad query, need to generate indexes, check LIKE as an alternative
     * */
     const sql = `
-      SELECT * FROM users
+      SELECT name, id, surname, login FROM users
       WHERE to_tsvector(login)
               || to_tsvector(email)
               || to_tsvector('russian', name)
