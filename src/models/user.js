@@ -65,4 +65,10 @@ export default class User extends Base {
     }
     return null;
   }
+
+  async IsUserInTheRoom(userId) {
+    const sql = 'SELECT user_id FROM room_members WHERE user_id = $1';
+    const { rows } = await this.db.query(sql, [userId]);
+    return !!rows.length;
+  }
 }

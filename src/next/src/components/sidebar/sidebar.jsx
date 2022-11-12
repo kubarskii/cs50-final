@@ -50,7 +50,6 @@ export default function Sidebar(props) {
     <aside className={styles.asideComponent}>
       <UserInfo name={name} surname={surname} />
       <input type="text" placeholder="search" onChange={(e) => handler(e)} />
-
       {!!rooms && !!rooms.length && (
         <div>
           {rooms.map(({ id: roomId, name: roomName }) => (
@@ -65,7 +64,6 @@ export default function Sidebar(props) {
           ))}
         </div>
       )}
-
       <button
         type="submit"
         style={{ width: '100%', border: '1px solid black' }}

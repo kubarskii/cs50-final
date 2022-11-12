@@ -88,9 +88,9 @@ export default function Container(props) {
                 <div
                   className={styles.mainContainer}
                   style={{
-                    height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
+                    flex: 1,
                   }}
                 >
                   <Header
@@ -113,7 +113,7 @@ export default function Container(props) {
                       overflowY: 'overlay',
                       display: 'flex',
                       flex: 1,
-                      // scrollBehavior: 'smooth',
+                      maxHeight: 'calc(100% - 136px)',
                     }}
                     ref={messagesListRef}
                   >

@@ -79,6 +79,7 @@ const services = {
     router.get('/user/rooms', RoomController.getRooms);
     router.get('/user/search', UserController.findUserByInput);
     router.get('/messages', RoomController.getMessagesInRoom);
+    router.get('/room/users', RoomController.getUsersInRoom);
 
     router.post('/user', UserController.register);
     router.post('/room', RoomController.createRoom);

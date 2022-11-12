@@ -1,12 +1,21 @@
 .asideComponent {
-    width: 100%;
-    max-width: 300px;
-    overflow: hidden;
+    flex: 1;
     flex-shrink: 3;
+    max-width: 300px;
+    overflow: auto;
     border-right: 1px solid #dfe1e5;
 }
 
-.userInfoContainer{
+@media screen and (max-width: 300px) {
+    .asideComponent {
+        max-width: 100vw;
+        width: 100vw;
+        flex: initial;
+    }
+}
+
+
+.userInfoContainer {
     align-items: center;
     display: flex;
     height: 56px;

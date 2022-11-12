@@ -50,4 +50,16 @@ export const RoomService = {
     }
     throw new Error(response.statusText);
   },
+
+  async getUsersInTheRoom(token, roomId) {
+    const response = await fetch(`/rest/api/room/users?roomId=${roomId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error(response.statusText);
+  },
 };

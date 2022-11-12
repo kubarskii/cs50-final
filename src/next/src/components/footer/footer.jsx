@@ -72,7 +72,7 @@ export default function Footer(props) {
   }, []);
 
   return (
-    <footer>
+    <footer style={{ flexShrink: 0 }}>
       {
         InputWrapper ? (
           <InputWrapper

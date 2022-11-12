@@ -15,8 +15,14 @@ function HomePage(props) {
   const { host } = props;
   const [hostname, port = 80] = host.split(':');
 
-  // eslint-disable-next-line react/jsx-props-no-spreading,no-shadow
-  const wrapper = useCallback((props) => <InputWrapper {...props} port={port} hostname={hostname} />, [port]);
+  /**
+   * Adding hostname and port to the component
+   * */
+  // eslint-disable-next-line no-shadow
+  const wrapper = useCallback((props) => (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <InputWrapper {...props} port={port} hostname={hostname} />
+  ), [port]);
 
   const [token] = useCookie('accessToken');
   const [rooms, setRooms] = useState([]);
@@ -34,14 +40,17 @@ function HomePage(props) {
 
   return (
     <div style={{
+      maxHeight: 'inherit',
       display: 'flex',
+      height: '100%',
+      flex: 1,
     }}
     >
       <Sidebar rooms={rooms} setMessages={setMessages} />
       <div style={{
-        height: '100vh',
         width: '100%',
-        maxHeight: '100%',
+        flex: 1,
+        maxHeight: 'var(--app-height)',
       }}
       >
         <Container
@@ -49,8 +58,10 @@ function HomePage(props) {
           {...{
             messagesListStyle: {
               width: '100%',
+              flex: 1,
               maxWidth: '768px',
               margin: '0 auto',
+              maxHeight: 'calc(100% - 136px)',
             },
             header: {
               title: `${roomName}`,
@@ -108,12 +119,16 @@ function HomePage(props) {
                 margin: 'auto',
                 width: '100%',
                 display: 'flex ',
+                flex: 1,
                 boxSizing: 'border-box',
                 padding: '0 12px',
               },
               inputWrapperStyles: {
                 fontSize: '1rem',
                 height: '3rem',
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
                 boxShadow: 'rgba(99, 99, 99, 0.3) 0px 2px 8px 0px',
                 backgroundColor: '#fff',
                 marginRight: '8px',

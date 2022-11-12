@@ -115,7 +115,7 @@ export default React.memo((props) => {
   }, [type, needTail, currentMessage]);
 
   return (
-    <div>
+    <div style={{ flexShrink: 0 }}>
       {sender === 'user' && <UserMessage />}
       {sender === 'bot' && <BotDefaultMessage />}
     </div>

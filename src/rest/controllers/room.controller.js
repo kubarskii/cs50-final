@@ -132,5 +132,27 @@ export const RoomController = {
     res.writeHead(201, 'Created', DEFAULT_HEADERS);
     res.write(JSON.stringify({ errors: errorsStack, success: addedUsers }));
     res.end();
-  }, // token, roomName
+  },
+  async getUsersInRoom(req, res) {
+    const authHeader = req.headers.authorization;
+    checkHeader(req, res, authHeader);
+    const { type, payload: { id: userId } } = authHeaderParser(authHeader);
+    if (type.toLowerCase() !== 'bearer') {
+      res.writeHead(400, 'Invalid authorization header', DEFAULT_HEADERS);
+      res.end();
+      return;
+    }
+    const { url } = req;
+    const { query } = URL.parse(url, true);
+    const { roomId } = query;
+    if (!await user.IsUserInTheRoom(userId)) {
+      res.writeHead(403, 'Forbidden', DEFAULT_HEADERS);
+      res.end();
+      return;
+    }
+    const usersInTheRoom = await room.getUsersInRoom(roomId);
+    res.writeHead(200, 'Success', DEFAULT_HEADERS);
+    res.write(JSON.stringify({ members: usersInTheRoom }));
+    res.end();
+  },
 };

@@ -20,13 +20,13 @@ export default class Room extends Base {
   }
 
   async getUsersInRoom(roomId) {
-    const sql = `SELECT users.id, users.name, users.surname, login
+    const sql = `SELECT users.id, users.name, users.surname, login, rooms.name
                      FROM rooms AS rooms
                               INNER JOIN room_members AS members ON rooms.id = members.room_id
                               INNER JOIN users ON members.user_id = users.id
                      WHERE rooms.id = $1`;
     const { rows } = await this.db.query(sql, [roomId]);
-    return (rows.length) ? rows : null;
+    return (rows.length) ? rows : [];
   }
 
   async createRoom(creatorId, name) {
