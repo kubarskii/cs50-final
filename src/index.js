@@ -2,6 +2,7 @@ import http from 'http';
 import cluster from 'cluster';
 import winston from 'winston';
 import net from 'net';
+import dns from 'dns';
 import { runNext } from './next';
 import runWS from './ws';
 import { LB_PORT, NEXT_PORT, REST_API_PORT } from './constants';
@@ -9,6 +10,8 @@ import { proxy } from './reverse-proxy';
 import Router from './lib/router';
 import { UserController } from './rest/controllers/user.controller';
 import { RoomController } from './rest/controllers/room.controller';
+
+dns.setDefaultResultOrder('ipv4first');
 
 const services = {
   NEXT: null,
@@ -54,7 +57,7 @@ const services = {
           started.REST = true;
         }
         if (started.REST && started.NEXT) {
-          tcpServer.listen({ host: '127.0.0.1', port: LB_PORT }, () => {
+          tcpServer.listen({ port: LB_PORT }, () => {
             logger.info(`TCP Server is running on ${LB_PORT}`);
           });
         }
