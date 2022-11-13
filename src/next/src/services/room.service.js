@@ -1,3 +1,39 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
+import { getCookie } from '../hooks/useCookie';
+
+export const roomApi = createApi({
+  reducerPath: 'roomApi',
+  baseQuery: fetchBaseQuery(
+    {
+      baseUrl: '/rest/api',
+      prepareHeaders: (headers) => {
+        const token = getCookie('accessToken');
+        headers.set('Authorization', `Bearer ${token}`);
+        return headers;
+      },
+    },
+  ),
+  endpoints(builder) {
+    return {
+      getMessagesInRoom: builder.query({
+        query: (roomId) => `/messages?roomId=${roomId}`,
+      }),
+      getUsersRooms: builder.query({
+        query: () => '/user/rooms',
+      }),
+      getUsersInTheRoom: builder.query({
+        query: (roomId) => `/room/users?roomId=${roomId}`,
+      }),
+    };
+  },
+});
+
+export const {
+  useGetMessagesInRoomQuery,
+  useGetUsersInTheRoomQuery,
+  useGetUsersRoomsQuery,
+} = roomApi;
+
 export const RoomService = {
   async getMessagesInRoom(token, roomId, signal) {
     const response = await fetch(`/rest/api/messages?roomId=${roomId}`, {

@@ -23,7 +23,8 @@
  * */
 
 /**
- *   @typedef { "value" | "command" | "typing" | "system" | "stopTyping" } MessageCommand
+ * @typedef { "value" | "command" | "typing"
+ * | "system" | "stopTyping" | "getMissed" } MessageCommand
  * command - can be used for chatbots, value - default value;
  * /
 

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Container from '../components/container/container';
 import InputWrapper from '../components/input-wrapper/input-wrapper.component';
-import useCookie from '../hooks/useCookie';
-import { RoomService } from '../services/room.service';
+import { useGetMessagesInRoomQuery, useGetUsersInTheRoomQuery, useGetUsersRoomsQuery } from '../services/room.service';
 import Sidebar from '../components/sidebar/sidebar';
 import { ControlsContext } from '../context/controls.context';
+import useCookie from '../hooks/useCookie';
+import { JWT } from '../../../utils/jwt';
 
 export async function getServerSideProps(context) {
   const { headers: host } = context.req;
@@ -14,6 +15,9 @@ export async function getServerSideProps(context) {
 function HomePage(props) {
   const { host } = props;
   const [hostname, port = 80] = host.split(':');
+  const [token] = useCookie('accessToken');
+  const decoded = JWT.decoderJWT(token);
+  const { id } = decoded;
 
   /**
    * Adding hostname and port to the component
@@ -24,18 +28,62 @@ function HomePage(props) {
     <InputWrapper {...props} port={port} hostname={hostname} />
   ), [port]);
 
-  const [token] = useCookie('accessToken');
-  const [rooms, setRooms] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [roomId, setRoomId] = useState(0);
   const chatbotCtx = React.useContext(ControlsContext);
-  const { roomName = 'Message-ME' } = chatbotCtx.getCurrentRoom();
+  let { roomName = 'Message-ME' } = chatbotCtx.getCurrentRoom();
+  const {
+    data: { messages: messagesResponse = [] } = {},
+    error: messagesError,
+    isLoading: isMessagesLoading,
+  } = useGetMessagesInRoomQuery(roomId);
+  const {
+    data: { rooms = [] } = {},
+    error: roomsListError,
+    isLoading: isRoomsListLoading,
+  } = useGetUsersRoomsQuery();
+
+  const {
+    data: { members = [] } = {},
+    error: roomsMembersError,
+    isLoading: isMembersLoading,
+  } = useGetUsersInTheRoomQuery(roomId);
+
+  if (members.length && members.length <= 2) {
+    const { name, surname } = members.find((el) => el.id !== id);
+    roomName = `${name} ${surname}`;
+  }
 
   useEffect(() => {
-    RoomService.getUsersRooms(token)
-      .then(({ rooms: roomsResponse }) => {
-        setRooms(roomsResponse);
-      })
-      .catch(console.log);
+    const preparedMessages = messagesResponse.map((msg) => {
+      const {
+        id: messageId,
+        message,
+        user_id: userId,
+        created_at: createdAt,
+      } = msg;
+      return {
+        type: 'message',
+        sender: userId.toString() === id ? 'user' : 'bot',
+        props: { text: message, date: createdAt },
+        uniqueId: messageId,
+      };
+    });
+    /**
+     * Creating data suitable for MessagesStore
+     * */
+    setMessages(preparedMessages);
+  }, [messagesResponse]);
+
+  useEffect(() => {
+    const unsubscribe = chatbotCtx.subscribe(({ currentRoom }) => {
+      if (currentRoom.roomId && roomId !== currentRoom.roomId) {
+        setRoomId(currentRoom.roomId);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
@@ -46,7 +94,7 @@ function HomePage(props) {
       flex: 1,
     }}
     >
-      <Sidebar rooms={rooms} setMessages={setMessages} />
+      <Sidebar rooms={rooms} />
       <div style={{
         width: '100%',
         flex: 1,

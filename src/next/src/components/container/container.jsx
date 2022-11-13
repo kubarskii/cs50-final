@@ -5,7 +5,7 @@ import Footer from '../footer/footer';
 import ChatMessage from '../message/message';
 import styles from './container.module.css';
 
-export default function Container(props) {
+export default React.memo((props) => {
   const {
     isOnline = true,
     inputDisabled = false,
@@ -156,4 +156,4 @@ export default function Container(props) {
                 )}
     </div>
   );
-}
+});

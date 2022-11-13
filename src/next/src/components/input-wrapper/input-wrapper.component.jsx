@@ -1,11 +1,13 @@
 import React, {
-  useCallback, useContext, useEffect, useMemo, useState,
+  useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { useDispatch } from 'react-redux';
 import styles from './input-wrapper.module.css';
 import { ControlsContext } from '../../context/controls.context';
 import useCookie, { getCookie } from '../../hooks/useCookie';
 import { JWT } from '../../../../utils/jwt';
+import { stateChange } from '../../store/slices/chatbot-status.slice';
 
 const addMessage = (parsedData, messagesStore, currentRoom) => {
   const [_, messageType, payload] = parsedData;
@@ -43,6 +45,44 @@ export default function InputWrapper(props) {
   const ctx = useContext(ControlsContext);
   const [value, setValue] = useState('');
   const [shown, setShown] = useState(false);
+  const audioPlayerRef = useRef(null);
+
+  const audioContextRef = useRef(null);
+  const audioBufferRef = useRef(null);
+
+  useEffect(() => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioContextRef.current = new AudioContext();
+    const context = audioContextRef.current;
+
+    const unlock = () => {
+      const buffer = context.createBuffer(1, 1, 22050);
+      const source = context.createBufferSource();
+      source.buffer = buffer;
+      source.connect(context.destination);
+      if (source.start) {
+        source.start(0);
+      } else {
+        source.noteOn(0);
+      }
+      document.removeEventListener('pointerdown', unlock);
+    };
+
+    document.addEventListener('pointerdown', unlock);
+
+    const gainNode = context.createGain();
+    gainNode.gain.value = 1; // set volume to 100%
+
+    fetch('/music/notification-sound.mp3')
+      .then((response) => response.arrayBuffer())
+      .then((data) => audioContextRef.current.decodeAudioData(
+        data,
+        (responseBuffer) => {
+          audioBufferRef.current = responseBuffer;
+        },
+        (error) => console.log(error),
+      ));
+  }, []);
 
   useEffect(() => {
     const unsubscribe = ctx.subscribe(({ inputShown }) => {
@@ -53,12 +93,24 @@ export default function InputWrapper(props) {
     };
   }, [ctx]);
 
+  const play = useCallback((context, audioBuffer) => {
+    const source = context.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(context.destination);
+    source.start();
+  }, []);
+
   const onMessage = useCallback(({ data }) => {
     const parsedData = JSON.parse(data);
     switch (parsedData?.[1]) {
       case 'message': {
+        const jwt = getCookie('accessToken', '');
+        const { id } = JWT.decoderJWT(jwt);
         const room = ctx.value.currentRoom;
         addMessage(parsedData, messagesStore, room);
+        if (id !== parsedData?.[2]?.senderId && audioBufferRef.current && audioContextRef.current) {
+          play(audioContextRef.current, audioBufferRef.current);
+        }
         scroll();
         break;
       }
@@ -77,24 +129,19 @@ export default function InputWrapper(props) {
         console.log('Unknown command');
       }
     }
-  }, []);
+  }, [audioPlayerRef, audioBufferRef, audioContextRef]);
 
   const [token] = useCookie('accessToken', '');
+  const dispatch = useDispatch();
+
   const { sendMessage, readyState } = useWebSocket(
     `ws://${hostname}:${port}/ws/api?token=${token}`,
-    { onMessage, shouldReconnect: () => true },
+    { onMessage, shouldReconnect: () => true, retryOnError: true },
   );
 
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-  }[readyState];
-
   useEffect(() => {
-    if (readyState > ReadyState.OPEN) {
+    dispatch(stateChange(readyState));
+    if (readyState !== ReadyState.OPEN) {
       ctx.disableInput();
     } else {
       ctx.enableInput();
@@ -143,18 +190,22 @@ export default function InputWrapper(props) {
     [],
   );
 
-  if (!shown) return null;
-
   return (
   // eslint-disable-next-line react/jsx-props-no-spreading,react/react-in-jsx-scope
-    <Original
-            /* eslint-disable-next-line react/jsx-props-no-spreading */
-      {...props}
-      buttonTitle={image}
-      onSubmit={onSubmit}
-      onChange={onChange}
-      value={value}
-      inputParser={inputParser}
-    />
+    <>
+      {shown && (
+      <Original
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
+        {...props}
+        buttonTitle={image}
+        onSubmit={onSubmit}
+        onChange={onChange}
+        value={value}
+        inputParser={inputParser}
+      />
+      )}
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio ref={audioPlayerRef} src="/music/notification-sound.mp3" />
+    </>
   );
 }

@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { ReadyState } from 'react-use-websocket';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
@@ -15,16 +17,25 @@ Sidebar.propTypes = {
     id: PropTypes.string,
     name: PropTypes.string,
   })).isRequired,
-  setMessages: PropTypes.func.isRequired,
 };
 
 export default function Sidebar(props) {
   const [token] = useCookie('accessToken');
   const decoded = JWT.decoderJWT(token);
   const { name, surname, id: userId } = decoded;
-  const { rooms, setMessages } = props;
+  const { rooms } = props;
   const chatbotCtx = React.useContext(ControlsContext);
   const [currentRoomId, setCurrentRoomId] = useState(chatbotCtx.getCurrentRoom());
+
+  const { wsStatus: { wsState: readyState } } = useSelector((state) => state);
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Retrying',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
 
   useEffect(() => {
     const unsubscribe = chatbotCtx.subscribe((value) => {
@@ -57,7 +68,6 @@ export default function Sidebar(props) {
               isSelected={roomId === currentRoomId}
               roomId={roomId}
               roomName={roomName}
-              setMessages={setMessages}
               userId={userId}
               key={roomId}
             />
@@ -76,6 +86,12 @@ export default function Sidebar(props) {
       >
         nut
       </button>
+      {connectionStatus !== 'Open' && (
+      <div className={styles.connectionStatus}>
+        <p>{connectionStatus}</p>
+        <div className={styles.ring} />
+      </div>
+      )}
     </aside>
   );
 }
