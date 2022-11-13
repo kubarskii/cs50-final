@@ -62,9 +62,10 @@ function HomePage(props) {
         user_id: userId,
         created_at: createdAt,
       } = msg;
+      const { name = '', surname = '' } = members?.find((el) => el.id === userId.toString()) || {};
       return {
         type: 'message',
-        sender: userId.toString() === id ? 'user' : 'bot',
+        sender: userId.toString() === id ? 'user' : `${name}`,
         props: { text: message, date: createdAt },
         uniqueId: messageId,
       };
@@ -73,7 +74,7 @@ function HomePage(props) {
      * Creating data suitable for MessagesStore
      * */
     setMessages(preparedMessages);
-  }, [messagesResponse]);
+  }, [messagesResponse, members]);
 
   useEffect(() => {
     const unsubscribe = chatbotCtx.subscribe(({ currentRoom }) => {

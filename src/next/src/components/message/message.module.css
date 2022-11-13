@@ -122,6 +122,7 @@ p.messageText {
     margin: 0.5rem 0;
     display: flex;
     box-sizing: border-box;
+    font-size: 0.75rem;
 }
 
 .userMessage {
@@ -148,12 +149,12 @@ p.messageText {
 
 .timeText{
     font-size: 0.6rem;
-    margin: 0 0 0 5px;
     display: flex;
     flex-shrink: 0;
     align-content: flex-end;
     align-items: flex-end;
     color: #000000A0;
+    white-space: nowrap;
 }
 
 .botMessage {

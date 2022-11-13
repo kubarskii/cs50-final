@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+  useCallback, useEffect, useMemo, useRef,
+} from 'react';
 import Header from '../header/header';
 import useChatbot from '../../hooks/useChatbot';
 import Footer from '../footer/footer';
@@ -51,6 +53,20 @@ export default React.memo((props) => {
     widgets,
     initialMessages,
   });
+
+  const splittedMessages = useMemo(() => messages.reduce((acc, curr, index) => {
+    if (index === 0) {
+      return [[curr]];
+    }
+    const lastArrayFromAcc = acc[acc.length - 1];
+    const lastFromLast = lastArrayFromAcc[lastArrayFromAcc.length - 1];
+    if (lastFromLast.sender === curr.sender) {
+      const arr = [...acc];
+      arr[arr.length - 1].push(curr);
+      return arr;
+    }
+    return [...acc, [curr]];
+  }, []), [messages]);
 
   const messagesListRef = useRef(null);
 
@@ -121,19 +137,63 @@ export default React.memo((props) => {
                       style={messagesListStyle}
                       className={styles.container}
                     >
-                      {messages.map((el, index) => (
-                        <ChatMessage
-                          key={el.uniqueId}
-                          needTail={el.sender !== messages[index + 1]?.sender}
-                          messagesStore={messagesStore}
-                          widgetsRegistry={registry}
-                          type={el.type}
-                          sender={el.sender}
-                          props={el.props}
-                          scroll={scrollToLast}
-                          uniqueId={el.uniqueId}
-                          currentMessage={messagesStore.getMessage(el.uniqueId)}
-                        />
+                      {splittedMessages.map((group) => (
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            flexShrink: 0,
+                            position: 'relative',
+                          }}
+                        >
+                          {group[0].sender !== 'user' && (
+                          <div style={{
+                            display: 'flex',
+                            flexDirection: 'column-reverse',
+                            position: 'absolute',
+                            paddingTop: '18px',
+                            marginBottom: '9px',
+                            height: '100%',
+                            width: '100%',
+                            bottom: 0,
+                            left: 0,
+                          }}
+                          >
+                            <div style={{
+                              width: '48px',
+                              height: '48px',
+                              borderRadius: '50%',
+                              background: '#fff',
+                              position: 'sticky',
+                              top: '9px',
+                              fontSize: '20px',
+                              bottom: 0,
+                              left: 0,
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              alignContent: 'center',
+                            }}
+                            >
+                              {group[0].sender.slice(0, 2).toUpperCase()}
+                            </div>
+                          </div>
+                          )}
+                          {group.map((el, index) => (
+                            <ChatMessage
+                              key={el.uniqueId}
+                              needTail={el.sender !== group[index + 1]?.sender}
+                              messagesStore={messagesStore}
+                              widgetsRegistry={registry}
+                              type={el.type}
+                              sender={el.sender}
+                              props={el.props}
+                              scroll={scrollToLast}
+                              uniqueId={el.uniqueId}
+                              currentMessage={messagesStore.getMessage(el.uniqueId)}
+                            />
+                          ))}
+                        </div>
                       ))}
                     </div>
                   </div>

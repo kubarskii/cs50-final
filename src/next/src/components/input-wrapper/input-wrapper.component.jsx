@@ -16,6 +16,8 @@ const addMessage = (parsedData, messagesStore, currentRoom) => {
     senderId,
     message,
     createdAt,
+    name,
+    surname,
   } = payload;
   const jwt = getCookie('accessToken', '');
   if (!jwt) return;
@@ -23,7 +25,7 @@ const addMessage = (parsedData, messagesStore, currentRoom) => {
   if (id !== senderId && roomId === currentRoom.roomId) {
     messagesStore?.add({
       type: messageType,
-      sender: 'bot',
+      sender: `${name}`,
       props: {
         text: message || 'Error',
         createdAt,

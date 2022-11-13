@@ -54,19 +54,23 @@ export default React.memo((props) => {
   const BotTextMessage = useCallback(
     ({ loading = false }) => (
       <div
-        style={{ width: loading ? '4rem' : undefined }}
+        style={{ width: loading ? '4rem' : undefined, marginLeft: '56px' }}
         className={[styles.message, styles.botMessage, tail].join(' ')}
       >
         {loading ? (
           <div className={styles['dot-elastic']} />
         ) : (
-          <div style={{ display: 'flex' }}>
-            <p className={styles.messageText} aria-label="Bot value">
-              {text}
-            </p>
-            <p className={styles.timeText} aria-label="Date value">
-              {msgDate}
-            </p>
+          <div>
+            <p className={styles.timeText} style={{ marginLeft: '-4px' }}>{sender}</p>
+            <div style={{ display: 'flex' }}>
+
+              <p className={styles.messageText} aria-label="Bot value">
+                {text}
+              </p>
+              <p className={styles.timeText} style={{ marginLeft: '5px' }} aria-label="Date value">
+                {msgDate}
+              </p>
+            </div>
           </div>
         )}
         {needTail && (
@@ -116,8 +120,7 @@ export default React.memo((props) => {
 
   return (
     <div style={{ flexShrink: 0 }}>
-      {sender === 'user' && <UserMessage />}
-      {sender === 'bot' && <BotDefaultMessage />}
+      {sender === 'user' ? <UserMessage /> : <BotDefaultMessage />}
     </div>
   );
 });

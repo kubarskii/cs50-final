@@ -70,12 +70,14 @@ export default class ServerMessage extends BaseMessage {
         sockets.add(el);
       }
     });
-    const senderId = this.ws[UNIQUE_USER].id;
+    const { id: senderId, name, surname } = this.ws[UNIQUE_USER];
     Array.from(sockets).forEach((socket) => {
       socket.send(JSON.stringify([type, 'message', {
         message: this.value[2].message,
         senderId,
         roomId,
+        name,
+        surname,
         createdAt,
       }]));
     });
