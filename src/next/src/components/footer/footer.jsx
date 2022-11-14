@@ -51,9 +51,11 @@ export default function Footer(props) {
 
     inputRef.current?.focus();
     if (query === '') return;
+
     messagesStore.add({
       props: {
         text: query,
+        date: Date.now(),
       },
       type: 'message',
       sender: 'user',

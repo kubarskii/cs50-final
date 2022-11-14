@@ -28,7 +28,7 @@ const addMessage = (parsedData, messagesStore, currentRoom) => {
       sender: `${name}`,
       props: {
         text: message || 'Error',
-        createdAt,
+        date: createdAt,
       },
     });
   }
@@ -155,7 +155,7 @@ export default function InputWrapper(props) {
     messagesStore?.add({
       type: 'message',
       sender: 'user',
-      props: { text: message },
+      props: { text: message, date: Date.now() },
     });
     sendMessage(JSON.stringify([1, 'message', { message, roomId }]));
   };

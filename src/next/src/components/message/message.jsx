@@ -67,7 +67,7 @@ export default React.memo((props) => {
               <p className={styles.messageText} aria-label="Bot value">
                 {text}
               </p>
-              <p className={styles.timeText} style={{ marginLeft: '5px' }} aria-label="Date value">
+              <p className={styles.timeText} aria-label="Date value">
                 {msgDate}
               </p>
             </div>
