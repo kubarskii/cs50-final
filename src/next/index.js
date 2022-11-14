@@ -2,14 +2,14 @@
  * @typedef {import('../../node_modules/next/dist/server/next').NextServerOptions} NextServerOptions
  */
 import next from 'next';
-import http from 'node:http';
+import http from 'http';
 import path from 'path';
 
 /**
  * @param {NextServerOptions} config
  * @param {number} port
  * */
-export default async function runNext(config, port, logger) {
+export async function runNext(config, port) {
   /**
      * Slightly isolating Next from other services and updating root folder
      * Next is running in separate cluster

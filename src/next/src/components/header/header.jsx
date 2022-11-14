@@ -1,30 +1,59 @@
-import Image from 'next/image'
-import Link from "next/link.js";
-import styles from './header.module.css'
+import React, { useContext, useEffect, useState } from 'react';
+import styles from './header.module.css';
+import Logo from './logo/logo';
+import { ControlsContext } from '../../context/controls.context';
 
-/**
- * @return JSX.Element
- * */
-export default function Header(_props) {
-    return (
-        <header>
-            <ul className={styles['header-list']}>
-                <li className={'logo-wrapper'}>
-                    <Link href="/" as="/">
-                        <a style={{width: '100px', height: 'auto'}}>
-                            <Image layout="intrinsic" width={80} height={60} className={'logo-img'} src={'/test.png'}/>
-                        </a>
-                    </Link>
+export default function Header(props) {
+  const {
+    title = 'Chatbot',
+    headerStyles = {},
+    imgSrc,
+    custom,
+    logoContainerStyle,
+    logoStyles,
+    controlContainerStyles,
+    titleStyle = {},
+    controls, // buttons
+  } = props;
 
-                </li>
-                <li>
-                    <Link href="/login" as="/login">
-                        <a>
-                            <p>Login</p>
-                        </a>
-                    </Link>
-                </li>
-            </ul>
-        </header>
-    )
+  const botControls = useContext(ControlsContext);
+  const [usersTyping, setTyping] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = botControls
+      .subscribe(() => {
+        const typing = botControls.getTyping();
+        setTyping(typing);
+      });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <div className={['header', styles.headerContainer].join(' ')} style={headerStyles}>
+      { (!!(custom || imgSrc)) && (
+      <Logo
+        custom={custom}
+        logoContainerStyle={logoContainerStyle}
+        logoStyles={logoStyles}
+        imgSrc={imgSrc}
+      />
+      )}
+      <h3 style={{ flex: 1, ...titleStyle }}>{title}</h3>
+      {!!usersTyping.length && (
+      <div style={{ display: 'flex' }}>
+        <div className={styles['dot-elastic']} />
+        <div style={{ marginLeft: '0.8rem' }}>
+          {usersTyping.join(', ')}
+          {' '}
+          {usersTyping.length > 1 ? 'are' : 'is'}
+          {' '}
+          typing
+        </div>
+      </div>
+      )}
+      <div style={controlContainerStyles}>
+        {controls}
+      </div>
+    </div>
+  );
 }
