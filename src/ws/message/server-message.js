@@ -1,9 +1,8 @@
 import BaseMessage from './abstract-message';
-import ServerErrorMessage from './server-error-message';
 import Room from '../../models/room';
 import db from '../../lib/db';
 import Message from '../../models/message';
-import { UNIQUE_USER } from '../constants';
+import { MESSAGE_COMMANDS, MESSAGE_TYPES, UNIQUE_USER } from '../constants';
 
 const room = new Room(db);
 const messageModel = new Message(db);
@@ -19,47 +18,53 @@ export default class ServerMessage extends BaseMessage {
     this.ws = ws;
     this.server = wss;
     this.message = this.message.bind(this);
-    this.notifyUsers = this.notifyUsers.bind(this);
+    this.notifyUsersBySockets = this.notifyUsersBySockets.bind(this);
+    this.messages = this.messages.bind(this);
+    this.rooms = this.rooms.bind(this);
+    this.processMessage = this.processMessage.bind(this);
   }
 
   get clients() {
     return this.server.clients;
   }
 
+  /**
+   * @private
+   * */
   async processMessage() {
     const [_, messageType, payload] = this.value;
     const handler = this[messageType];
     if (!handler || typeof handler !== 'function') {
-      this.ws.send(new ServerErrorMessage('Server error can be generated only by server', this.ws));
+      this.ws.send(JSON.stringify([MESSAGE_TYPES.SERVER_ERROR, { message: `Handler: ${messageType} is not implemented` }]));
+      return;
     }
     await handler(payload);
   }
 
   /**
-   * @private
-   * */
+     * @private
+     * */
   async saveMessage() {
 
   }
 
   /**
-   * @private
-   * */
-  async checkUserInTheRoom() {
-
+     * @private
+     * @param {string} userId
+     * @param {string} roomId
+     * */
+  async checkUserInTheRoom(userId, roomId) {
+    /** @type {{ id: string }[]} */
+    const usersInTheRoom = await room.getUsersInRoom(roomId);
+    const ids = usersInTheRoom.map((user) => user.id);
+    return userId in ids;
   }
 
   /**
-   * @private
-   * @param {MessageType} type
-   * @param {string} roomId
-   * */
-  async notifyUsers(type, roomId, createdAt) {
-    /**
-     * 1. Getting all users in the room
-     * 2. Getting websockets of users
-     * 3. Sending messages to all of them
+     * @private
      * */
+  async getSocketsOfUsersInTheRoomOnline(roomId) {
+    /** @type {{ id: string }[]} */
     const usersInTheRoom = await room.getUsersInRoom(roomId);
     const ids = usersInTheRoom.map((user) => user.id);
     const sockets = new Set();
@@ -70,16 +75,23 @@ export default class ServerMessage extends BaseMessage {
         sockets.add(el);
       }
     });
-    const { id: senderId, name, surname } = this.ws[UNIQUE_USER];
+    const offline = ids.filter((id) => {
+      const socketsArr = [...sockets];
+      const socket = socketsArr.find((el) => el[UNIQUE_USER].id === id);
+      return !socket;
+    });
+    return { sockets, offline };
+  }
+
+  /**
+     * @private
+     * @param {Set} sockets
+     * @param {MessageType} type
+     * @param {any} messagePayload
+     * */
+  async notifyUsersBySockets(sockets, type, messagePayload, commandType) {
     Array.from(sockets).forEach((socket) => {
-      socket.send(JSON.stringify([type, 'message', {
-        message: this.value[2].message,
-        senderId,
-        roomId,
-        name,
-        surname,
-        createdAt,
-      }]));
+      socket.send(JSON.stringify([type, MESSAGE_COMMANDS.MESSAGE, messagePayload]));
     });
   }
 
@@ -104,11 +116,43 @@ export default class ServerMessage extends BaseMessage {
     const { rows: createdMessages } = await messageModel.create(
       { user_id: userId, message: payloadMessage, room_id: roomId },
     );
-    const { created_at: createdAt } = createdMessages[0];
-    await this.notifyUsers(1, roomId, createdAt);
+    const { created_at: createdAt, id: createdMessageId } = createdMessages[0];
+    const { id: senderId, name, surname } = this.ws[UNIQUE_USER];
+    const messagePayload = {
+      message: this.value[2].message,
+      senderId,
+      roomId,
+      name,
+      surname,
+      createdAt,
+    };
+
+    const { sockets, offline } = await this.getSocketsOfUsersInTheRoomOnline(roomId);
+
+    await this.notifyUsersBySockets(sockets, 1, messagePayload);
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const userOfflineId of [...offline]) {
+      await messageModel.saveUnReceivedMessage(userOfflineId, createdMessageId);
+    }
   }
 
-  async stopTyping() {
+  async rooms() {
+    const { rows } = await room.getUserRooms(this.ws[UNIQUE_USER].id);
+    this.ws.send(JSON.stringify(
+      [MESSAGE_TYPES.SERVER_MESSAGE, MESSAGE_COMMANDS.ROOMS, { rows }],
+    ));
+  }
+
+  // async missed() {
+  //   // const { rows } =
+  // }
+
+  async messages(payload) {
+    const { roomId } = payload;
+    const { rows } = await messageModel.getMessages(roomId);
+    this.ws.send(JSON.stringify([
+      MESSAGE_TYPES.SERVER_MESSAGE, MESSAGE_COMMANDS.MESSAGES, { rows },
+    ]));
   }
 
   async command() {

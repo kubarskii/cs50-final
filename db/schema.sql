@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS regions;
 DROP TABLE IF EXISTS room_members;
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS not_received_messages;
 DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS rooms;
@@ -79,10 +80,10 @@ CREATE TABLE messages
     id          bigint generated always as identity,
     user_id     integer NOT NULL,
     message     text    NOT NULL,
-    receiver_id integer   DEFAULT NULL, -- just to highlight user
+    receiver_id integer   DEFAULT NULL,  -- just to highlight user
     room_id     integer NOT NULL,
     created_at  timestamp DEFAULT now(), -- works in PG
-    read        boolean DEFAULT FALSE
+    read        boolean   DEFAULT FALSE
 );
 
 ALTER TABLE messages
@@ -96,3 +97,22 @@ ALTER TABLE messages
 
 ALTER TABLE messages
     ADD CONSTRAINT fkReceiver FOREIGN KEY (receiver_id) REFERENCES users (id);
+
+-- used for messages that were not sent by websockets because of lost connection
+-- must be sent immediately after new connection established
+-- must be deleted right after sent to the user
+CREATE TABLE not_received_messages
+(
+    id         bigint generated always as identity,
+    user_id    bigint NOT NULL,
+    message_id bigint NOT NULL
+);
+
+ALTER TABLE not_received_messages
+    ADD CONSTRAINT pkUnreadMessage PRIMARY KEY (id);
+
+ALTER TABLE not_received_messages
+    ADD CONSTRAINT fkUserId FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
+
+ALTER TABLE not_received_messages
+    ADD CONSTRAINT fkMessageId FOREIGN KEY (message_id) REFERENCES messages (id) ON DELETE CASCADE;

@@ -23,17 +23,21 @@
  * */
 
 /**
- * @typedef { "value" | "command" | "typing"
- * | "system" | "stopTyping" | "getMissed" } MessageCommand
+ * @typedef {
+ * "value"
+ * | "command"
+ * | "typing"
+ * | "system"
+ * | "missed"
+ * | "message"
+ * | "messages"
+ * | "rooms" } MessageCommand
  * command - can be used for chatbots, value - default value;
  * /
 
  /**
- * @typedef {MessagePayload} MessagePayload
- * /
-
- /**
- * @typedef {[MessageType, MessageCommand, MessagePayload]} MessageDTO
+ * @typedef {[MessageType, MessageCommand, MessagePayload]
+ * | [MessageType, MessagePayload]} MessageDTO
  */
 
 /**

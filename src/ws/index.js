@@ -32,7 +32,7 @@ const PayloadDTOSchema = {
       },
     },
   },
-  required: ['message', 'roomId'],
+  required: [],
 };
 
 /** @type {Schema} */

@@ -15,6 +15,9 @@ export const MESSAGE_TYPES = {
  * */
 export const MESSAGE_COMMANDS = {
   MESSAGE: 'message',
+  MESSAGES: 'messages',
+  MISSED: 'missed',
+  ROOMS: 'rooms',
   COMMAND: 'command',
   TYPING: 'typing',
   SYS_MESSAGE: 'system',

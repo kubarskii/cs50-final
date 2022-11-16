@@ -146,7 +146,7 @@ function HomePage(props) {
               overflow: 'hidden',
             },
             footer: {
-              placeholder: 'Type your value here...',
+              placeholder: 'Type your message...',
               buttonStyles: {
                 cursor: 'pointer',
                 background: '#fff',

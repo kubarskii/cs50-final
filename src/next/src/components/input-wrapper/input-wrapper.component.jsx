@@ -71,6 +71,7 @@ export default function InputWrapper(props) {
     };
 
     document.addEventListener('pointerdown', unlock);
+    document.body.click();
 
     const gainNode = context.createGain();
     gainNode.gain.value = 1; // set volume to 100%
