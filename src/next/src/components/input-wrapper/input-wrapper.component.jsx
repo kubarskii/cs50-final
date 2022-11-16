@@ -62,9 +62,8 @@ export default function InputWrapper(props) {
   }, []);
 
   const onSubmit = (e) => {
-    console.log('dasdasd');
     e.preventDefault();
-    sendMessage(JSON.stringify([1, 'message', { message: value, roomId: '18' }]));
+    if (value) sendMessage(JSON.stringify([1, 'message', { message: value, roomId: '18' }]));
     setValue('');
   };
 

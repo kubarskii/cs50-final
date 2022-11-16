@@ -90,7 +90,7 @@ export default React.memo((props) => {
   }, [messagesListRef, initialMessages]);
 
   useEffect(() => {
-    scrollToLast();
+    scrollToLast('auto');
   }, [initialMessages]);
 
   return (
