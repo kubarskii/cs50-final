@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import dayjs from 'dayjs';
 import Header from '../header/header';
-import useChatbot from '../../hooks/useChatbot';
 import Footer from '../footer/footer';
 import ChatMessage from '../message/message';
 import styles from './container.module.css';
@@ -46,16 +45,7 @@ export default React.memo((props) => {
     } = {},
   } = props;
 
-  const {
-    messages = [],
-    registry,
-    messagesStore,
-  } = useChatbot({
-    widgets,
-    initialMessages,
-  });
-
-  console.log(messages);
+  const messages = initialMessages;
 
   const splitByUser = useCallback((messages) => messages.reduce((acc, curr, index) => {
     if (index === 0) {
@@ -95,25 +85,17 @@ export default React.memo((props) => {
 
   const scrollToLast = useCallback((behavior = 'smooth') => {
     setTimeout(() => {
-      const lastChild = messagesListRef.current
-        ?.firstElementChild
-        ?.lastElementChild
-        ?.lastElementChild
-        ?.lastElementChild;
-      console.dir(lastChild);
-      if (!lastChild || !messagesListRef.current) return;
       messagesListRef.current.scroll({ top: 10000000, behavior });
     }, 10);
   }, [messagesListRef, initialMessages]);
 
   useEffect(() => {
-    messagesStore.update(initialMessages);
-    scrollToLast('auto');
+    scrollToLast();
   }, [initialMessages]);
 
   return (
     <div style={containerStyles}>
-      {(!!messagesStore && !!registry)
+      {(!!messages)
                 && (
                 <div
                   className={styles.mainContainer}
@@ -225,14 +207,11 @@ export default React.memo((props) => {
                                   <ChatMessage
                                     key={el.uniqueId}
                                     needTail={el.sender !== group[index + 1]?.sender}
-                                    messagesStore={messagesStore}
-                                    widgetsRegistry={registry}
                                     type={el.type}
                                     sender={el.sender}
                                     props={el.props}
                                     scroll={scrollToLast}
                                     uniqueId={el.uniqueId}
-                                    currentMessage={messagesStore.getMessage(el.uniqueId)}
                                   />
                                 ))}
                               </div>
@@ -256,7 +235,6 @@ export default React.memo((props) => {
                     buttonStyles={buttonStyles}
                     buttonTitle={buttonTitle}
                     messageParser={messageParser}
-                    messagesStore={messagesStore}
                   />
                 </div>
                 )}

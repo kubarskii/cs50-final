@@ -144,7 +144,14 @@ export const RoomController = {
     }
     const { url } = req;
     const { query } = URL.parse(url, true);
-    const { roomId } = query;
+    const { roomId: roomIdRaw } = query;
+    const roomId = parseInt(roomIdRaw, 10);
+    // eslint-disable-next-line no-restricted-globals
+    if (isNaN(roomId)) {
+      res.writeHead(400, 'Invalid query parameters', DEFAULT_HEADERS);
+      res.end();
+      return;
+    }
     if (!await user.IsUserInTheRoom(userId)) {
       res.writeHead(403, 'Forbidden', DEFAULT_HEADERS);
       res.end();

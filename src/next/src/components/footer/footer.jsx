@@ -1,15 +1,14 @@
 import React, {
-  useCallback, useContext, useRef, useState,
+  useCallback, useRef, useState,
 } from 'react';
+import { useDispatch } from 'react-redux';
 import Input from '../input/input';
-import Semaphore from '../../utils/semaphore';
-import { ControlsContext } from '../../context/controls.context';
+import { message } from '../../store/slices/messages.slice';
 
 export default function Footer(props) {
   const {
     left,
     right,
-    messagesStore,
     messageParser,
     inputParser,
     placeholder,
@@ -22,50 +21,19 @@ export default function Footer(props) {
     buttonStyles,
   } = props;
 
-  const [query, setQuery] = useState('');
-  const semaphoreRef = useRef(new Semaphore(maxConcurrentRequests));
-  const inputRef = useRef(null);
-  const controls = useContext(ControlsContext);
+  console.log(InputWrapper);
 
-  const processMessage = useCallback(async (q) => {
-    const result = await inputParser({
-      query: q,
-      messagesStore,
-      scroll,
-      botControls: controls,
-    });
-    await messageParser({
-      query: q,
-      result,
-      messagesStore,
-      scroll,
-      botControls: controls,
-    });
-  }, [inputParser, messageParser]);
+  const [query, setQuery] = useState('');
+  const inputRef = useRef(null);
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-
-    const q = query;
     setQuery(() => '');
 
     inputRef.current?.focus();
     if (query === '') return;
 
-    messagesStore.add({
-      props: {
-        text: query,
-        date: Date.now(),
-      },
-      type: 'message',
-      sender: 'user',
-    });
     scroll();
-    /**
-     * Promise warnings should be ignored
-     * */
-    semaphoreRef.current
-      .execute(processMessage, q);
   };
 
   const onChangeHandler = useCallback((e) => {
@@ -78,7 +46,6 @@ export default function Footer(props) {
       {
         InputWrapper ? (
           <InputWrapper
-            botControls={controls}
             inputWrapperStyles={inputWrapperStyles}
             containerStyles={containerStyles}
             defaultOnChange={onChangeHandler}
@@ -91,14 +58,12 @@ export default function Footer(props) {
             inputParser={inputParser}
             messageParser={messageParser}
             placeholder={placeholder}
-            messagesStore={messagesStore}
             buttonTitle={buttonTitle}
             buttonStyles={buttonStyles}
           />
         )
           : (
             <Input
-              botControls={controls}
               inputWrapperStyles={inputWrapperStyles}
               containerStyles={containerStyles}
               ref={inputRef}
@@ -112,7 +77,6 @@ export default function Footer(props) {
               inputParser={inputParser}
               messageParser={messageParser}
               placeholder={placeholder}
-              messagesStore={messagesStore}
               buttonTitle={buttonTitle}
               buttonStyles={buttonStyles}
             />

@@ -62,9 +62,8 @@ CREATE TABLE session
 (
     id      bigint generated always as identity,
     user_id integer     NOT NULL,
-    token   varchar(64) NOT NULL,
-    ip      varchar(45) NOT NULL,
-    data    text
+    token   varchar NOT NULL,
+    ip      varchar NOT NULL
 );
 
 ALTER TABLE session

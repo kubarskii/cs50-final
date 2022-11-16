@@ -15,6 +15,7 @@ export const MESSAGE_TYPES = {
  * */
 export const MESSAGE_COMMANDS = {
   MESSAGE: 'message',
+  IS_ONLINE: 'online',
   MESSAGES: 'messages',
   MISSED: 'missed',
   ROOMS: 'rooms',

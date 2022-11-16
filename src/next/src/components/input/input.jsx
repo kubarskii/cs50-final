@@ -1,6 +1,4 @@
-import React, {
-  useEffect, useState,
-} from 'react';
+import React from 'react';
 import styles from './input.module.css';
 
 export default React.forwardRef((props, ref) => {
@@ -15,18 +13,9 @@ export default React.forwardRef((props, ref) => {
     inputWrapperStyles = {},
     buttonStyles = {},
     buttonTitle = 'Send',
-    botControls,
   } = props;
-  const [disabled, setDisabled] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = botControls
-      .subscribe((v) => {
-        const { inputDisabled } = v;
-        setDisabled(inputDisabled);
-      });
-    return () => unsubscribe();
-  }, []);
+  console.log(onSubmit);
 
   return (
     <form onSubmit={onSubmit}>
@@ -37,7 +26,7 @@ export default React.forwardRef((props, ref) => {
               {left}
             </div>
             <input
-              disabled={disabled}
+              disabled={false}
               ref={ref}
               className={styles.input}
               spellCheck

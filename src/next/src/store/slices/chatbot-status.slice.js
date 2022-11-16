@@ -8,11 +8,8 @@ export const chatbotStatusSlice = createSlice(
     },
     reducers: {
       stateChange(state, action) {
-        const { type, payload } = action;
-        return {
-          ...state,
-          wsState: payload,
-        };
+        const { payload: wsState } = action;
+        return { ...state, wsState };
       },
     },
   },

@@ -1,5 +1,5 @@
 export const LB_PORT = process.env.REST_PORT || 5555;
-export const REST_API_PORT = process.env.REST_PORT || 3002;
+export const REST_API_PORT = process.env.REST_PORT || 3003;
 export const WS_PORT = process.env.REST_PORT || 3006;
 export const NEXT_PORT = process.env.NEXT_PORT || 3001;
 export const DEFAULT_HOST = 'localhost';

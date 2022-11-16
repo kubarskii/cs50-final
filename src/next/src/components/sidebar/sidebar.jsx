@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
+import { useRouter } from 'next/router';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
 import { JWT } from '../../../../utils/jwt';
 import UserInfo from './user-info';
 import Room from './room';
-import { ControlsContext } from '../../context/controls.context';
 import debounce from '../../utils/debounce';
 import { UserService } from '../../services/user.service';
 
@@ -21,12 +21,13 @@ Sidebar.propTypes = {
 
 export default function Sidebar(props) {
   const [token] = useCookie('accessToken');
+  const router = useRouter();
+  const { roomId } = router.query;
   const decoded = JWT.decoderJWT(token);
   const { name, surname, id: userId } = decoded;
   const { rooms } = props;
-  const chatbotCtx = React.useContext(ControlsContext);
-  const [currentRoomId, setCurrentRoomId] = useState(chatbotCtx.getCurrentRoom());
 
+  const [currentRoomId, setCurrentRoomId] = useState(roomId);
   const { wsStatus: { wsState: readyState } } = useSelector((state) => state);
 
   const connectionStatus = {
@@ -38,14 +39,8 @@ export default function Sidebar(props) {
   }[readyState];
 
   useEffect(() => {
-    const unsubscribe = chatbotCtx.subscribe((value) => {
-      const { currentRoom: { roomId } } = value;
-      setCurrentRoomId(roomId);
-    });
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+    if (currentRoomId) window.history.pushState({}, null, `/?roomId=${currentRoomId}`);
+  }, [currentRoomId]);
 
   const onChange = async (e) => {
     const searchString = e.target.value;
@@ -63,13 +58,13 @@ export default function Sidebar(props) {
       <input type="text" placeholder="search" onChange={(e) => handler(e)} />
       {!!rooms && !!rooms.length && (
         <div>
-          {rooms.map(({ id: roomId, name: roomName }) => (
+          {rooms.map(({ id: elRoomId, name: roomName }) => (
             <Room
-              isSelected={roomId === currentRoomId}
-              roomId={roomId}
+              isSelected={elRoomId === currentRoomId}
+              roomId={elRoomId}
               roomName={roomName}
               userId={userId}
-              key={roomId}
+              key={elRoomId}
             />
           ))}
         </div>

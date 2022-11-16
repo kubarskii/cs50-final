@@ -1,56 +1,23 @@
 import React, {
   useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
-import { useDispatch } from 'react-redux';
 import styles from './input-wrapper.module.css';
-import { ControlsContext } from '../../context/controls.context';
-import useCookie, { getCookie } from '../../hooks/useCookie';
-import { JWT } from '../../../../utils/jwt';
-import { stateChange } from '../../store/slices/chatbot-status.slice';
-
-const addMessage = (parsedData, messagesStore, currentRoom) => {
-  const [_, messageType, payload] = parsedData;
-  const {
-    roomId,
-    senderId,
-    message,
-    createdAt,
-    name,
-    surname,
-  } = payload;
-  const jwt = getCookie('accessToken', '');
-  if (!jwt) return;
-  const { id } = JWT.decoderJWT(jwt);
-  if (id !== senderId && roomId === currentRoom.roomId) {
-    messagesStore?.add({
-      type: messageType,
-      sender: `${name}`,
-      props: {
-        text: message || 'Error',
-        date: createdAt,
-      },
-    });
-  }
-};
+import { WebsocketContext } from '../../context/websocket.context';
 
 export default function InputWrapper(props) {
   const {
     Original,
-    messagesStore,
     scroll,
-    botControls,
-    port,
-    hostname,
   } = props;
 
-  const ctx = useContext(ControlsContext);
   const [value, setValue] = useState('');
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(true);
   const audioPlayerRef = useRef(null);
 
   const audioContextRef = useRef(null);
   const audioBufferRef = useRef(null);
+
+  const { sendMessage } = useContext(WebsocketContext);
 
   useEffect(() => {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -87,15 +54,6 @@ export default function InputWrapper(props) {
       ));
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = ctx.subscribe(({ inputShown }) => {
-      setShown(inputShown);
-    });
-    return () => {
-      if (unsubscribe && typeof unsubscribe === 'function') unsubscribe();
-    };
-  }, [ctx]);
-
   const play = useCallback((context, audioBuffer) => {
     const source = context.createBufferSource();
     source.buffer = audioBuffer;
@@ -103,67 +61,10 @@ export default function InputWrapper(props) {
     source.start();
   }, []);
 
-  const onMessage = useCallback(({ data }) => {
-    const parsedData = JSON.parse(data);
-    switch (parsedData?.[1]) {
-      case 'message': {
-        const jwt = getCookie('accessToken', '');
-        const { id } = JWT.decoderJWT(jwt);
-        const room = ctx.value.currentRoom;
-        addMessage(parsedData, messagesStore, room);
-        if (id !== parsedData?.[2]?.senderId && audioBufferRef.current && audioContextRef.current) {
-          play(audioContextRef.current, audioBufferRef.current);
-        }
-        scroll();
-        break;
-      }
-      case 'typing': {
-        const userName = parsedData?.[2]?.userName || '';
-        ctx.addTyping(userName);
-        break;
-      }
-      case 'stopTyping': {
-        const userName = parsedData?.[2]?.userName || '';
-        if (!userName) ctx.removeAllTyping();
-        else ctx.removeTyping(userName);
-        break;
-      }
-      default: {
-        console.log('Unknown command');
-      }
-    }
-  }, [audioPlayerRef, audioBufferRef, audioContextRef]);
-
-  const [token] = useCookie('accessToken', '');
-  const dispatch = useDispatch();
-
-  const { sendMessage, readyState } = useWebSocket(
-    `ws://${hostname}:${port}/ws/api?token=${token}`,
-    { onMessage, shouldReconnect: () => true, retryOnError: true },
-  );
-
-  useEffect(() => {
-    dispatch(stateChange(readyState));
-    if (readyState !== ReadyState.OPEN) {
-      ctx.disableInput();
-    } else {
-      ctx.enableInput();
-    }
-  }, [readyState]);
-
-  const inputParser = async (message) => {
-    const { roomId } = ctx.value.currentRoom;
-    messagesStore?.add({
-      type: 'message',
-      sender: 'user',
-      props: { text: message, date: Date.now() },
-    });
-    sendMessage(JSON.stringify([1, 'message', { message, roomId }]));
-  };
-
   const onSubmit = (e) => {
+    console.log('dasdasd');
     e.preventDefault();
-    if (value) inputParser(value);
+    sendMessage(JSON.stringify([1, 'message', { message: value, roomId: '18' }]));
     setValue('');
   };
 
@@ -194,21 +95,17 @@ export default function InputWrapper(props) {
   );
 
   return (
-  // eslint-disable-next-line react/jsx-props-no-spreading,react/react-in-jsx-scope
-    <>
+    <div>
       {shown && (
       <Original
-          /* eslint-disable-next-line react/jsx-props-no-spreading */
         {...props}
         buttonTitle={image}
         onSubmit={onSubmit}
         onChange={onChange}
         value={value}
-        inputParser={inputParser}
       />
       )}
-      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio ref={audioPlayerRef} src="/music/notification-sound.mp3" />
-    </>
+    </div>
   );
 }

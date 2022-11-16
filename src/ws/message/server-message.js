@@ -21,6 +21,8 @@ export default class ServerMessage extends BaseMessage {
     this.notifyUsersBySockets = this.notifyUsersBySockets.bind(this);
     this.messages = this.messages.bind(this);
     this.rooms = this.rooms.bind(this);
+    this.online = this.online.bind(this);
+    this.typing = this.typing.bind(this);
     this.processMessage = this.processMessage.bind(this);
   }
 
@@ -89,14 +91,38 @@ export default class ServerMessage extends BaseMessage {
      * @param {MessageType} type
      * @param {any} messagePayload
      * */
-  async notifyUsersBySockets(sockets, type, messagePayload, commandType) {
+  async notifyUsersBySockets(sockets, type, messagePayload, commandType = MESSAGE_COMMANDS.MESSAGE) {
     Array.from(sockets).forEach((socket) => {
-      socket.send(JSON.stringify([type, MESSAGE_COMMANDS.MESSAGE, messagePayload]));
+      socket.send(JSON.stringify([type, commandType, messagePayload]));
     });
   }
 
-  async typing() {
+  async typing(payload) {
+    const { roomId } = payload;
+    const userId = this.ws[UNIQUE_USER].id;
+    const { sockets } = await this.getSocketsOfUsersInTheRoomOnline(roomId);
+    await this.notifyUsersBySockets(
+      sockets,
+      MESSAGE_TYPES.SERVER_MESSAGE,
+      { userId },
+      MESSAGE_COMMANDS.TYPING,
+    );
+  }
 
+  async online(payload) {
+    const { clients = [] } = this.server;
+    const onlineUser = [...clients].find((el) => {
+      const { id } = (el[UNIQUE_USER]);
+      return id === payload.id;
+    });
+    this.ws.send(JSON.stringify(
+      [
+        MESSAGE_TYPES.SERVER_MESSAGE,
+        MESSAGE_COMMANDS.IS_ONLINE,
+        { isOnline: !!onlineUser },
+      ],
+
+    ));
   }
 
   async message(payload) {
@@ -120,11 +146,11 @@ export default class ServerMessage extends BaseMessage {
     const { id: senderId, name, surname } = this.ws[UNIQUE_USER];
     const messagePayload = {
       message: this.value[2].message,
-      senderId,
-      roomId,
+      user_id: senderId,
+      room_id: roomId,
       name,
       surname,
-      createdAt,
+      created_at: createdAt,
     };
 
     const { sockets, offline } = await this.getSocketsOfUsersInTheRoomOnline(roomId);
@@ -137,7 +163,7 @@ export default class ServerMessage extends BaseMessage {
   }
 
   async rooms() {
-    const { rows } = await room.getUserRooms(this.ws[UNIQUE_USER].id);
+    const rows = await room.getUserRooms(this.ws[UNIQUE_USER].id);
     this.ws.send(JSON.stringify(
       [MESSAGE_TYPES.SERVER_MESSAGE, MESSAGE_COMMANDS.ROOMS, { rows }],
     ));

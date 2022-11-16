@@ -1,8 +1,6 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import dayjs from 'dayjs';
 import styles from './message.module.css';
-import Boundary from '../error-boundary/error-boundary.component';
-import { ControlsContext } from '../../context/controls.context';
 
 /**
  * TODO:  Find the reason of extra re-renders
@@ -12,15 +10,9 @@ export default React.memo((props) => {
     type,
     sender,
     needTail = false,
-    widgetsRegistry,
-    messagesStore,
     props: messageProps,
-    uniqueId,
-    scroll,
-    currentMessage,
   } = props;
 
-  const controls = useContext(ControlsContext);
   const { text = '', date: createdAt } = messageProps;
   const msgDate = dayjs(createdAt).format('HH:mm');
   const tail = !needTail ? styles.noTail : '';
@@ -90,33 +82,7 @@ export default React.memo((props) => {
     [messageProps, tail],
   );
 
-  const BotWidgetMessage = useCallback(() => {
-    const Widget = widgetsRegistry.getWidget(type, {
-      ...messageProps,
-      scroll,
-      messagesStore,
-      uniqueId,
-      botControls: controls,
-      widgetsRegistry,
-      needTail,
-      type,
-    });
-    return (
-      <div aria-label="Bot widget">
-        <Boundary type={type}>{!!Widget && <Widget />}</Boundary>
-      </div>
-    );
-  }, [type, needTail, messageProps]);
-
-  const BotDefaultMessage = useCallback(() => {
-    if (type === 'message') {
-      return <BotTextMessage />;
-    }
-    if (type === 'loading') {
-      return <BotTextMessage loading />;
-    }
-    return <BotWidgetMessage />;
-  }, [type, needTail, currentMessage]);
+  const BotDefaultMessage = useCallback(() => <BotTextMessage />, [type, needTail]);
 
   return (
     <div style={{ flexShrink: 0 }}>
