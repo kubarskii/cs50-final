@@ -1,5 +1,6 @@
 import URL from 'url';
 import { DEFAULT_HEADERS } from '../../constants';
+
 /**
  * @typedef {import('http').RequestListener} RequestListener
  * */
@@ -14,10 +15,10 @@ export default class Router {
   };
 
   /**
-   * @param {any} srv
-   * @param {string} [basePath]
-   * @param {string} [interceptEvent]
-   * */
+     * @param {any} srv
+     * @param {string} [basePath]
+     * @param {string} [interceptEvent]
+     * */
   constructor(srv, basePath = '', interceptEvent = 'request') {
     this.srv = srv;
     this.interceptEvent = interceptEvent;
@@ -41,9 +42,9 @@ export default class Router {
   }
 
   /**
-   * @param {IncomingMessage} req
-   * @param {ServerResponse} res
-   * */
+     * @param {IncomingMessage} req
+     * @param {ServerResponse} res
+     * */
   async handleRouters(req, res) {
     const { url, method } = req;
     if (method === 'OPTIONS') {
@@ -55,6 +56,10 @@ export default class Router {
     const urlWithoutBasePath = pathname.replace(this.basePath, '');
     const handler = this.findHandler(method, urlWithoutBasePath);
     if (handler && typeof handler === 'function') handler(req, res);
+    else {
+      res.writeHead(404);
+      res.end();
+    }
   }
 
   parseUrl(uri) {
@@ -81,9 +86,9 @@ export default class Router {
   }
 
   /**
-   * @param {string} url
-   * @param {RequestListener} cb
-   * */
+     * @param {string} url
+     * @param {RequestListener} cb
+     * */
   get(url, cb) {
     this.addHandler('GET', url, cb);
   }

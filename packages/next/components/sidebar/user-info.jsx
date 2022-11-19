@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "./sidebar.module.css";
+import React from 'react';
+import styles from './sidebar.module.css';
 
 export default function UserInfo(props) {
   const { name, surname } = props;

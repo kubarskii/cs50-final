@@ -1,8 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
-import { useRouter } from 'next/router';
 import { JWT } from '@me/server/src/utils/jwt';
 import styles from './sidebar.module.css';
 import { RoomService } from '../../services/room.service';
@@ -35,7 +33,7 @@ export default function Sidebar() {
   const onChange = async (e) => {
     const searchString = e.target.value;
     if (searchString.length >= 2) {
-      const res = await UserService.findUser(token, searchString);
+      await UserService.findUser(token, searchString);
     }
   };
 
@@ -46,17 +44,17 @@ export default function Sidebar() {
       <UserInfo name={name} surname={surname} />
       <input type="text" placeholder="search" onChange={(e) => handler(e)} />
       {!!rooms && !!rooms.length && (
-        <div>
-          {rooms.map(({ id: elRoomId, name: roomName }) => (
-            <Room
-              isSelected={elRoomId === currentRoomId}
-              roomId={elRoomId}
-              roomName={roomName}
-              userId={userId}
-              key={elRoomId}
-            />
-          ))}
-        </div>
+      <div>
+        {rooms.map(({ id: elRoomId, name: roomName }) => (
+          <Room
+            isSelected={elRoomId === currentRoomId}
+            roomId={elRoomId}
+            roomName={roomName}
+            userId={userId}
+            key={elRoomId}
+          />
+        ))}
+      </div>
       )}
       <button
         type="submit"

@@ -26,6 +26,6 @@ export async function runNext(config, port) {
       handle(req, res);
     },
   ).listen(port);
-  httpServer.on('error', console.log);
+  httpServer.on('error', console.error);
   return httpServer;
 }

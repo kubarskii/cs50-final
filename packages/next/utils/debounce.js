@@ -1,7 +1,8 @@
 /**
  * prototype storage
  * */
-function Debounce() {}
+function Debounce() {
+}
 
 export default function debounce(handler, timeout) {
   const fn = (...args) => {

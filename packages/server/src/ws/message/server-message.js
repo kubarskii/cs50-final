@@ -23,6 +23,7 @@ export default class ServerMessage extends BaseMessage {
     this.rooms = this.rooms.bind(this);
     this.online = this.online.bind(this);
     this.typing = this.typing.bind(this);
+    this.members = this.members.bind(this);
     this.processMessage = this.processMessage.bind(this);
   }
 
@@ -31,8 +32,8 @@ export default class ServerMessage extends BaseMessage {
   }
 
   /**
-   * @private
-   * */
+     * @private
+     * */
   async processMessage() {
     const [_, messageType, payload] = this.value;
     const handler = this[messageType];
@@ -41,13 +42,6 @@ export default class ServerMessage extends BaseMessage {
       return;
     }
     await handler(payload);
-  }
-
-  /**
-     * @private
-     * */
-  async saveMessage() {
-
   }
 
   /**
@@ -121,8 +115,16 @@ export default class ServerMessage extends BaseMessage {
         MESSAGE_COMMANDS.IS_ONLINE,
         { isOnline: !!onlineUser },
       ],
-
     ));
+  }
+
+  async members(payload) {
+    const { roomId } = payload;
+    const members = await room.getUsersInRoom(roomId);
+    this.ws.send(JSON.stringify([
+      MESSAGE_TYPES.SERVER_MESSAGE,
+      MESSAGE_COMMANDS.MEMBERS,
+      { rows: members }]));
   }
 
   async message(payload) {
