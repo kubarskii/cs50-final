@@ -17,6 +17,7 @@ function LoginPage() {
     const { login, password } = formRef.current;
     UserService.getUser({ login: login.value, password: password.value })
       .then((data) => {
+        alert(data);
         const { accessToken } = data;
         if (accessToken) {
           setUserToken(accessToken, {
@@ -29,12 +30,13 @@ function LoginPage() {
         }
       })
       .catch((err) => {
+        alert(err);
         setError(err?.message);
       });
   };
 
   return (
-    <>
+    <div>
       <div className="page-wrapper bg-gra-03 p-t-45 p-b-50">
         <div className="wrapper wrapper--w790">
           <div className="card card-5">
@@ -78,7 +80,7 @@ function LoginPage() {
         </div>
       </div>
       {!!error && <p style={{ color: 'red' }}>{error}</p>}
-    </>
+    </div>
   );
 }
 

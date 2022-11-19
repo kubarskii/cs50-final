@@ -10,7 +10,6 @@ import ChatMessage from '../message/message';
 import styles from './container.module.css';
 import { useGetUsersInTheRoomQuery } from '../../services/room.service';
 import { getCookie } from '../../hooks/useCookie';
-import { current } from '../../store/slices/room.slice';
 
 export default React.memo((props) => {
   const {
@@ -79,8 +78,8 @@ export default React.memo((props) => {
       };
     });
     /**
-     * Creating data suitable for MessagesStore
-     * */
+         * Creating data suitable for MessagesStore
+         * */
     setMessages(preparedMessages);
   }, [members, storeMessages]);
 
@@ -135,7 +134,7 @@ export default React.memo((props) => {
       {(!!messages)
                 && (
                 <div
-                  className={styles.mainContainer}
+                  className={[styles.mainContainer, 'bg-gra-03'].join(' ')}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -194,66 +193,66 @@ export default React.memo((props) => {
                           }}
                           >
                             {
-                              dayjs(byUser[0][0].props.date).format('DD MMMM')
-                            }
+                                                dayjs(byUser[0][0].props.date).format('DD MMMM')
+                                            }
                           </p>
                           {
-                            byUser.map((group) => (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  flexShrink: 0,
-                                  position: 'relative',
-                                }}
-                              >
-                                {group[0].sender !== 'user' && (
-                                <div style={{
-                                  display: 'flex',
-                                  flexDirection: 'column-reverse',
-                                  position: 'absolute',
-                                  paddingTop: '18px',
-                                  marginBottom: '9px',
-                                  height: '100%',
-                                  width: '100%',
-                                  bottom: 0,
-                                  left: 0,
-                                }}
-                                >
-                                  <div style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    borderRadius: '50%',
-                                    background: '#fff',
-                                    position: 'sticky',
-                                    top: '9px',
-                                    fontSize: '20px',
-                                    bottom: 0,
-                                    left: 0,
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    alignContent: 'center',
-                                  }}
-                                  >
-                                    {group[0].sender.slice(0, 2).toUpperCase()}
-                                  </div>
-                                </div>
-                                )}
-                                {group.map((el, index) => (
-                                  <ChatMessage
-                                    key={el.uniqueId}
-                                    needTail={el.sender !== group[index + 1]?.sender}
-                                    type={el.type}
-                                    sender={el.sender}
-                                    props={el.props}
-                                    scroll={scrollToLast}
-                                    uniqueId={el.uniqueId}
-                                  />
-                                ))}
-                              </div>
-                            ))
-}
+                                            byUser.map((group) => (
+                                              <div
+                                                style={{
+                                                  display: 'flex',
+                                                  flexDirection: 'column',
+                                                  flexShrink: 0,
+                                                  position: 'relative',
+                                                }}
+                                              >
+                                                {group[0].sender !== 'user' && (
+                                                <div style={{
+                                                  display: 'flex',
+                                                  flexDirection: 'column-reverse',
+                                                  position: 'absolute',
+                                                  paddingTop: '18px',
+                                                  marginBottom: '9px',
+                                                  height: '100%',
+                                                  width: '100%',
+                                                  bottom: 0,
+                                                  left: 0,
+                                                }}
+                                                >
+                                                  <div style={{
+                                                    width: '48px',
+                                                    height: '48px',
+                                                    borderRadius: '50%',
+                                                    background: '#fff',
+                                                    position: 'sticky',
+                                                    top: '9px',
+                                                    fontSize: '20px',
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    alignContent: 'center',
+                                                  }}
+                                                  >
+                                                    {group[0].sender.slice(0, 2).toUpperCase()}
+                                                  </div>
+                                                </div>
+                                                )}
+                                                {group.map((el, index) => (
+                                                  <ChatMessage
+                                                    key={el.uniqueId}
+                                                    needTail={el.sender !== group[index + 1]?.sender}
+                                                    type={el.type}
+                                                    sender={el.sender}
+                                                    props={el.props}
+                                                    scroll={scrollToLast}
+                                                    uniqueId={el.uniqueId}
+                                                  />
+                                                ))}
+                                              </div>
+                                            ))
+                                        }
                         </div>
                       ))}
 
