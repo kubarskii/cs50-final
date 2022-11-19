@@ -5,7 +5,7 @@ export const roomSlice = createSlice({
   initialState: {
     currentRoom: { name: '', id: '' },
     rooms: [],
-    roomMembers: {},
+    roomMembers: [],
   },
   reducers: {
     current(state, action) {
@@ -18,19 +18,28 @@ export const roomSlice = createSlice({
         },
       };
     },
-    rooms(state, action) {
-      const { payload: { rows } } = action;
-      return { ...state, rooms: [...rows] };
+    members(state, action) {
+      const { payload: { rows = [] } } = action;
+      return {
+        ...state,
+        roomMembers: [
+          ...(rows || []),
+        ],
+      };
     },
-    setRoomMember(state, action) {
+    rooms(state, action) {
+      const { payload: { rows = [] } } = action;
+      return { ...state, rooms: [...(rows || [])] };
+    },
+    roomMember(state, action) {
       const { payload } = action;
       const { user, userId } = payload;
       return {
         ...state,
-        roomMembers: {
+        roomMembers: [
           ...state.roomMembers,
-          [userId]: user,
-        },
+          { user, userId },
+        ],
       };
     },
   },
@@ -38,10 +47,13 @@ export const roomSlice = createSlice({
 
 export const {
   actions: {
-    setRoomMember,
+    roomMember,
     rooms,
     current,
+    members,
   },
 } = roomSlice;
 
-export const roomActions = { setRoomMember, rooms, current };
+export const roomActions = {
+  roomMember, rooms, current, members,
+};

@@ -1,6 +1,4 @@
-import React, {
-  useContext, useEffect,
-} from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
 import { WebsocketContext } from '../../context/websocket.context';
@@ -16,6 +14,7 @@ export default function ChatContainerComponent() {
     if (readyState === ReadyState.OPEN) {
       if (roomId) {
         sendMessage(JSON.stringify([1, 'messages', { roomId }]));
+        sendMessage(JSON.stringify([1, 'members', { roomId }]));
       }
       sendMessage(JSON.stringify([1, 'rooms', {}]));
     }

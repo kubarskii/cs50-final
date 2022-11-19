@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import useCookie from '../hooks/useCookie';
 import { UserService } from '../services/user.service';
+import { PORT } from '../constants';
 
 function LoginPage() {
   /**
@@ -15,9 +16,12 @@ function LoginPage() {
   const onSubmit = (e) => {
     e.preventDefault();
     const { login, password } = formRef.current;
-    UserService.getUser({ login: login.value, password: password.value })
+    const { hostname } = window.location;
+    UserService.getUser(
+      { login: login.value, password: password.value },
+      `http://${hostname}:${PORT}`,
+    )
       .then((data) => {
-        alert(data);
         const { accessToken } = data;
         if (accessToken) {
           setUserToken(accessToken, {
@@ -25,12 +29,11 @@ function LoginPage() {
             SameSite: 'Strict',
           });
           router.push({
-            pathname: router.query?.returnUrl || '/',
+            pathname: decodeURIComponent(router.query?.returnUrl.toString()) || '/',
           });
         }
       })
       .catch((err) => {
-        alert(err);
         setError(err?.message);
       });
   };

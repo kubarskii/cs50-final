@@ -3,7 +3,7 @@ import { JWT } from '@me/server/src/utils/jwt';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { getCookie } from '../hooks/useCookie';
-import { WebsocketsProvider } from '../context/websocket.context';
+import { pendingRequests, WebsocketsProvider } from '../context/websocket.context';
 import { messagesActions } from '../store/slices/messages.slice';
 import { current, roomActions } from '../store/slices/room.slice';
 import { store } from '../store/store';
@@ -14,6 +14,10 @@ const onMessage = (play) => ({ data }) => {
   const parsedData = JSON.parse(data);
   if (parsedData[0] !== 1 && parsedData[0] !== 2) return;
   const handlerName = parsedData[1];
+  pendingRequests.next({
+    ...pendingRequests.value,
+    [handlerName]: null,
+  });
   const action = messagesActions[handlerName] || roomActions[handlerName];
   if (typeof action !== 'function') return;
   const payload = parsedData[2];
@@ -29,14 +33,21 @@ const onMessage = (play) => ({ data }) => {
   store.dispatch(action(payload));
 };
 
-function HomePage() {
+export async function getServerSideProps(context) {
+  const { headers: host } = context.req;
+  return { props: { host: host.host } };
+}
+
+function HomePage(props) {
+  const { host } = props;
+  const [hostname, port = 80] = host.split(':');
   const token = getCookie('accessToken');
   const dispatch = useDispatch();
   const router = useRouter();
-  const { roomId = '0' } = router.query;
+  const { roomId } = router.query;
 
   useEffect(() => {
-    dispatch(current({ id: roomId }));
+    if (roomId) dispatch(current({ id: roomId }));
   }, [roomId]);
 
   if (!token) {
@@ -89,7 +100,7 @@ function HomePage() {
   }, []);
 
   return (
-    <WebsocketsProvider port={PORT} hostname={HOST} onMessage={onMessage(play)}>
+    <WebsocketsProvider port={PORT} hostname={hostname} onMessage={onMessage(play)}>
       <ChatContainerComponent />
       <audio ref={audioPlayerRef} />
     </WebsocketsProvider>

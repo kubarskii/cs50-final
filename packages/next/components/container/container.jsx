@@ -8,7 +8,6 @@ import Header from '../header/header';
 import Footer from '../footer/footer';
 import ChatMessage from '../message/message';
 import styles from './container.module.css';
-import { useGetUsersInTheRoomQuery } from '../../services/room.service';
 import { getCookie } from '../../hooks/useCookie';
 
 export default React.memo((props) => {
@@ -49,16 +48,13 @@ export default React.memo((props) => {
     } = {},
   } = props;
 
-  const storeMessages = useSelector((state) => state.messages.messages);
-  const { id: roomId = 0 } = useSelector((state) => state.rooms.currentRoom);
-  const [messages, setMessages] = useState([]);
   const token = getCookie('accessToken');
+
+  const storeMessages = useSelector((state) => state.messages.messages);
+  const members = useSelector((state) => state.rooms.roomMembers);
+
+  const [messages, setMessages] = useState([]);
   const { id: userIdFromToken } = JWT.decoderJWT(token);
-  const {
-    data: { members = [] } = {},
-    error: roomsMembersError,
-    isLoading: isMembersLoading,
-  } = useGetUsersInTheRoomQuery(roomId);
 
   useEffect(() => {
     if (!members.length) return;

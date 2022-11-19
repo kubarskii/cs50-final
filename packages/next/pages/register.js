@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import Router from 'next/router';
-import Header from '../components/head/header';
 import { UserService } from '../services/user.service';
+import { PORT } from '../constants';
 
 function RegisterPage() {
   const registerFormRef = useRef();
@@ -9,13 +9,14 @@ function RegisterPage() {
 
   const onSubmit = (e) => {
     e.preventDefault();
+    const { hostname } = window.location;
     const formData = new FormData(registerFormRef.current);
     const body = {};
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of formData) {
       body[key] = value;
     }
-    UserService.createUser(body)
+    UserService.createUser(body, `http://${hostname}:${PORT}`)
       .then(() => {
         Router.push({
           pathname: '/login',
@@ -55,15 +56,15 @@ function RegisterPage() {
                   <div className="row row-space">
                     <div className="col-2">
                       <div className="input-group-desc">
-                          <input required className="input--style-5" type="text" name="name" />
-                          <label className="label--desc">first name</label>
-                        </div>
+                        <input required className="input--style-5" type="text" name="name" />
+                        <label className="label--desc">first name</label>
+                      </div>
                     </div>
                     <div className="col-2">
                       <div className="input-group-desc">
-                          <input required className="input--style-5" type="text" name="surname" />
-                          <label className="label--desc">last name</label>
-                        </div>
+                        <input required className="input--style-5" type="text" name="surname" id="surname" />
+                        <label htmlFor="surname" className="label--desc">last name</label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -86,7 +87,12 @@ function RegisterPage() {
               </div>
               {!!error && <p style={{ color: 'red' }}>{error}</p>}
               <div style={{ display: 'flex' }}>
-                <input style={{ marginLeft: 'auto' }} className="btn btn--radius-2 btn--blue" type="submit" value="Sign up" />
+                <input
+                  style={{ marginLeft: 'auto' }}
+                  className="btn btn--radius-2 btn--blue"
+                  type="submit"
+                  value="Sign up"
+                />
               </div>
             </form>
           </div>
