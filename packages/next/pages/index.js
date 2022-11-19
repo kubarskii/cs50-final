@@ -22,7 +22,9 @@ const onMessage = (play) => ({ data }) => {
   if (typeof action !== 'function') return;
   const payload = parsedData[2];
   if (handlerName === 'message') {
-    store.dispatch(action(payload));
+    const globalState = store.getState();
+    const { id: currentRoomId } = globalState.rooms.currentRoom;
+    store.dispatch(action({ ...payload, currentRoomId }));
     const token = getCookie('accessToken');
     const decoded = JWT.decoderJWT(token);
     const { id } = decoded;

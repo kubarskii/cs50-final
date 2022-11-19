@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { store } from '../store';
 
 /**
  * {
@@ -21,9 +22,10 @@ export const messagesSlice = createSlice(
       /** CAUTION NO (s) */
       message(state, action) {
         const { payload } = action;
+        if (payload.currentRoomId !== payload.room_id) return state;
         /**
-         * preprocess message before adding to state
-         * */
+                 * preprocess message before adding to state
+                 * */
         return { ...state, messages: [...state.messages, payload] };
       },
       deleteMessage(state, action) {
@@ -33,8 +35,8 @@ export const messagesSlice = createSlice(
       messages(state, action) {
         const { payload: { rows } } = action;
         /**
-         * preprocess messages
-         * */
+                 * preprocess messages
+                 * */
         return { ...state, messages: [...(rows.reverse())] };
       },
       setLoading(state, action) {
