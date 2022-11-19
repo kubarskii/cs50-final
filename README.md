@@ -23,7 +23,7 @@ You can watch the presentation by visiting the link: <link here>
 3. Install dependencies with ```npm i```
 4. Run application ```npm start```
 
-By default, the application is running on PORT ```80```.
+By default, the application is running on PORT ```8080```.
 
 ## Testing
 To run test ```npm run test```

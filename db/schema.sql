@@ -22,9 +22,6 @@ CREATE TABLE rooms
 ALTER TABLE rooms
     ADD CONSTRAINT pkRoom PRIMARY KEY (id);
 
-ALTER TABLE rooms
-    ADD CONSTRAINT fkCreatorId FOREIGN KEY (creator_id) REFERENCES users (id);
-
 CREATE TABLE users
 (
     id       bigint generated always as identity,
@@ -38,6 +35,9 @@ CREATE TABLE users
 
 ALTER TABLE users
     ADD CONSTRAINT pkUsers PRIMARY KEY (id);
+
+ALTER TABLE rooms
+    ADD CONSTRAINT fkCreatorId FOREIGN KEY (creator_id) REFERENCES users (id);
 
 CREATE TABLE room_members
 (
