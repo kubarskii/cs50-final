@@ -12,8 +12,6 @@ export const UserService = {
     const response = await fetch(`${url || API_BASE_URL}/rest/api/user`, {
       method: 'POST',
       body: JSON.stringify(data),
-      mode: 'cors',
-      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -40,11 +38,12 @@ export const UserService = {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      credentials: 'include',
-      mode: 'cors',
     });
     if (response.ok) {
       return response.json();
+    }
+    if (response.status === 404) {
+      return [];
     }
     throw new Error(response.statusText);
   },

@@ -47,7 +47,7 @@ export default class Router {
      * */
   async handleRouters(req, res) {
     const { url, method } = req;
-    if (method === 'OPTIONS') {
+    if (method.toString() === 'OPTIONS') {
       res.writeHead(204, DEFAULT_HEADERS);
       res.end();
       return;
