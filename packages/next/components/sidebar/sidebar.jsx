@@ -9,6 +9,7 @@ import UserInfo from './user-info';
 import Room from './room';
 import debounce from '../../utils/debounce';
 import { UserService } from '../../services/user.service';
+import { PORT } from '../../constants';
 
 export default function Sidebar() {
   const [token] = useCookie('accessToken');
@@ -32,8 +33,9 @@ export default function Sidebar() {
 
   const onChange = async (e) => {
     const searchString = e.target.value;
+    const { hostname, protocol } = window.location;
     if (searchString.length >= 2) {
-      await UserService.findUser(token, searchString);
+      await UserService.findUser(token, searchString, `${protocol}//${hostname}:${PORT}`);
     }
   };
 

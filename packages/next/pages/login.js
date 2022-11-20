@@ -29,7 +29,7 @@ function LoginPage() {
             SameSite: 'Strict',
           });
           router.push({
-            pathname: decodeURIComponent(router.query?.returnUrl.toString()) || '/',
+            pathname: router.query?.returnUrl || '/',
           });
         }
       })

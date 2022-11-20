@@ -56,9 +56,10 @@ export const UserController = {
   async register(req, res) {
     try {
       const body = await getBody(req);
+      console.log(body);
       const [isValid, errorMessage] = validateSchema(userSchema)(body);
       if (!isValid) {
-        res.writeHead(400, 'Invalid body parameters', DEFAULT_HEADERS);
+        res.writeHead(400, DEFAULT_HEADERS);
         res.write(Buffer.from(JSON.stringify({ error: errorMessage })));
         res.end();
         return;
@@ -81,15 +82,15 @@ export const UserController = {
     }
   },
   /**
-   * TODO
-   * */
+     * TODO
+     * */
   async forgotPassword(req, res) {
     const body = getBody(req);
     const { email } = body;
   },
   /**
-   * Used to search users by login, name, surname, email or phone
-   * */
+     * Used to search users by login, name, surname, email or phone
+     * */
   async findUserByInput(req, res) {
     const MIN_QUERY_LENGTH = 2;
     const authHeader = req.headers.authorization;
