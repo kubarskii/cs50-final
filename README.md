@@ -3,6 +3,8 @@
 ## Install nvm
 https://github.com/coreybutler/nvm-windows
 
+To use nvm run ```nvm use``` in the project directory
+
 ## Description
 
 This repo contains the last project for CS50x course. It consists of 3 main parts:
