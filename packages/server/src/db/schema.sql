@@ -1,10 +1,10 @@
 DROP TABLE IF EXISTS regions;
+DROP TABLE IF EXISTS not_received_messages;
 DROP TABLE IF EXISTS room_members;
 DROP TABLE IF EXISTS messages;
-DROP TABLE IF EXISTS not_received_messages;
 DROP TABLE IF EXISTS session;
-DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS rooms;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE regions
 (

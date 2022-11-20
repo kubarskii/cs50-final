@@ -56,7 +56,6 @@ export const UserController = {
   async register(req, res) {
     try {
       const body = await getBody(req);
-      console.log(body);
       const [isValid, errorMessage] = validateSchema(userSchema)(body);
       if (!isValid) {
         res.writeHead(400, DEFAULT_HEADERS);
