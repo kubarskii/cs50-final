@@ -28,7 +28,7 @@ const onMessage = (play) => ({ data }) => {
     const token = getCookie('accessToken');
     const decoded = JWT.decoderJWT(token);
     const { id } = decoded;
-    const { sender_id: senderId } = payload;
+    const { user_id: senderId } = payload;
     if (id !== senderId && typeof play === 'function') play();
     return;
   }

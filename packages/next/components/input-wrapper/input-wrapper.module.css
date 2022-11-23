@@ -1,5 +1,9 @@
 .paperPlane {
-    fill: currentColor;
-    width: 1.3rem;
-    height: 1.3rem;
+    fill: black;
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.paperPlane:hover {
+    fill: #2c6ed5;
 }

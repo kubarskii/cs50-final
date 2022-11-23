@@ -44,7 +44,20 @@ export default function Sidebar() {
   return (
     <aside className={styles.asideComponent}>
       <UserInfo name={name} surname={surname} />
-      <input type="text" placeholder="search" onChange={(e) => handler(e)} />
+      <input
+        type="text"
+        placeholder="search"
+        onChange={(e) => handler(e)}
+        style={{
+          maxWidth: 'calc(100% - 20px)',
+          height: '32px',
+          padding: '10px',
+          boxSizing: 'border-box',
+          margin: '10px',
+          borderRadius: '8px',
+          background: 'aliceblue',
+        }}
+      />
       {!!rooms && !!rooms.length && (
       <div>
         {rooms.map(({ id: elRoomId, name: roomName }) => (
