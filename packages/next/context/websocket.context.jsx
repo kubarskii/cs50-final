@@ -1,9 +1,9 @@
 import React, {
-  useEffect, useState, useMemo, useCallback,
+  useEffect, useState, useMemo,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import useWebSocket from 'react-use-websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 import useCookie from '../hooks/useCookie';
 import { stateChange } from '../store/slices/chatbot-status.slice';
 
@@ -86,7 +86,7 @@ export function WebsocketsProvider(props) {
             ...value,
             [type]: null,
           });
-          sendMessageHOF(data);
+          if (readyState === ReadyState.OPEN) sendMessageHOF(data);
         }
       }, 250);
     };
