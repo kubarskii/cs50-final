@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS regions;
+DROP TABLE IF EXISTS statuses ;
 DROP TABLE IF EXISTS not_received_messages;
 DROP TABLE IF EXISTS room_members;
 DROP TABLE IF EXISTS messages;
@@ -6,12 +6,14 @@ DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS rooms;
 DROP TABLE IF EXISTS users;
 
-CREATE TABLE regions
+CREATE TABLE statuses
 (
-    id         SERIAL PRIMARY KEY,
-    max_length smallint DEFAULT NULL,
-    code       smallint DEFAULT NULL -- external key
+    id         bigint generated always as identity,
+    name       varchar NOT NULL
 );
+
+ALTER TABLE statuses
+    ADD CONSTRAINT pkStatusId PRIMARY KEY (id);
 
 CREATE TABLE rooms
 (
@@ -31,7 +33,8 @@ CREATE TABLE users
     email    varchar NOT NULL,
     name     varchar DEFAULT NULL,
     surname  varchar DEFAULT NULL,
-    phone    varchar DEFAULT NULL
+    phone    varchar DEFAULT NULL,
+    salt     varchar NOT NULL
 );
 
 ALTER TABLE users

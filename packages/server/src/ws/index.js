@@ -11,8 +11,10 @@ import ServerMessage from './message/server-message';
 import ServerErrorMessage from './message/server-error-message';
 import { SECRET_KEY } from '../utils/jwt';
 import ClientErrorMessage from './message/client-error-message';
-import { user } from '../controllers/room.controller';
 import { validateSchema } from '../utils/schema-validator';
+import User from '../models/user';
+import db from '../utils/db';
+import Message from '../models/message';
 
 /** @type {Schema} */
 const PayloadDTOSchema = {
@@ -58,6 +60,9 @@ const MessageDTOSchema = {
 
 const messageProcessor = new MessageProcessor();
 const schemaValidator = validateSchema(MessageDTOSchema);
+
+const user = new User(db);
+const message = new Message(db);
 
 /** @type {(data: Buffer) => void} */
 function onMessage(wss) {
@@ -112,20 +117,32 @@ const checkTokenIsJWT = (token) => new Promise((resolve, reject) => {
 const onConnection = (wss) => async (ws, request) => {
   const parsedUrl = url.parse(request.url, true);
   /**
-   * @type {string} - JWT token
-   * */
-  const { token } = parsedUrl.query;
+     * @type {string} - JWT token
+     * */
 
+  const { token } = parsedUrl.query;
   try {
     const { id } = await checkTokenIsJWT(token);
+    // const missedMessages = user.(id);
     const userData = await user.getById(id);
     if (!userData.rows.length) {
       messageProcessor.process(new ServerErrorMessage('User is not authorized', ws));
       closeConnection(Array.from(wss.clients), ws);
     }
+    const userMissedMessages = await message.getUnreceivedMessages(id);
     // eslint-disable-next-line no-param-reassign,prefer-destructuring
     ws[UNIQUE_USER] = userData.rows[0];
     ws.on('message', onMessage(wss));
+    if (userMissedMessages?.length) {
+      ws.send(
+        JSON.stringify([
+          MESSAGE_TYPES.SERVER_MESSAGE,
+          MESSAGE_COMMANDS.MISSED,
+          { missed: userMissedMessages },
+        ]),
+      );
+    }
+    await message.deleteUnreceivedMessages(id);
   } catch (e) {
     messageProcessor.process(new ServerErrorMessage('User is not authorized', ws));
     closeConnection(Array.from(wss.clients), ws);

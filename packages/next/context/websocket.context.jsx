@@ -65,12 +65,7 @@ export function WebsocketsProvider(props) {
     },
   );
 
-  useEffect(() => {
-    const u = pendingRequests.subscribe((v) => {
-      console.log(v);
-    });
-    return () => u();
-  }, []);
+  const getReadyState = () => readyState;
 
   const sendMessageHOF = (data) => {
     sendMessage(data);
@@ -86,9 +81,10 @@ export function WebsocketsProvider(props) {
             ...value,
             [type]: null,
           });
-          if (readyState === ReadyState.OPEN) sendMessageHOF(data);
+          if (getReadyState() === ReadyState.OPEN) sendMessageHOF(data);
+          else (check());
         }
-      }, 250);
+      }, 500);
     };
 
     const { value } = pendingRequests;

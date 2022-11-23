@@ -73,7 +73,7 @@ export default class ServerMessage extends BaseMessage {
     });
     const offline = ids.filter((id) => {
       const socketsArr = [...sockets];
-      const socket = socketsArr.find((el) => el[UNIQUE_USER].id === id);
+      const socket = socketsArr.find((el) => el[UNIQUE_USER]?.id === id);
       return !socket;
     });
     return { sockets, offline };
@@ -137,7 +137,7 @@ export default class ServerMessage extends BaseMessage {
     const { roomId, message: payloadMessage } = payload;
     const { rows } = await room.read(roomId);
     if (!rows.length) return;
-    const userId = this.ws[UNIQUE_USER].id;
+    const userId = this.ws[UNIQUE_USER]?.id;
     if (!userId) return;
     const isUserInTheRoom = await room.isUserInRoom(userId, roomId);
     if (!isUserInTheRoom) return;
@@ -165,7 +165,7 @@ export default class ServerMessage extends BaseMessage {
   }
 
   async rooms() {
-    const rows = await room.getUserRooms(this.ws[UNIQUE_USER].id);
+    const rows = await room.getUserRooms(this.ws[UNIQUE_USER]?.id);
     this.ws.send(JSON.stringify(
       [MESSAGE_TYPES.SERVER_MESSAGE, MESSAGE_COMMANDS.ROOMS, { rows }],
     ));

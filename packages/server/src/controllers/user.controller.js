@@ -7,6 +7,7 @@ import User from '../models/user';
 import db from '../utils/db';
 import { JWT } from '../utils/jwt';
 import { validateSchema } from '../utils/schema-validator';
+import { checkValid, createHash } from '../db/hash';
 
 const userSchema = {
   type: 'object',
@@ -39,16 +40,21 @@ export const UserController = {
     const auth = req.headers.authorization;
     const { type, payload: { login, password } } = authHeaderParser(auth);
     if (type.toLowerCase() === 'basic' && login && password) {
-      const userData = await user.login(login, password);
-      if (!userData) {
+      const { salt, password: encrypted } = await user.getByLogin(login);
+      if (!salt) {
         res.writeHead(401, 'Unknown user', DEFAULT_HEADERS);
         res.end();
         return;
       }
-      const accessToken = JWT.generateJWTForUser(userData);
-      res.writeHead(200, DEFAULT_HEADERS);
-      res.write(Buffer.from(JSON.stringify({ accessToken })));
-      res.end();
+      const isPasswordValid = await checkValid(password, salt, encrypted);
+      if (isPasswordValid) {
+        const userData = await user.login(login, encrypted);
+        const accessToken = JWT.generateJWTForUser(userData);
+        res.writeHead(200, DEFAULT_HEADERS);
+        res.write(Buffer.from(JSON.stringify({ accessToken })));
+        res.end();
+        return;
+      }
     }
     res.writeHead(401, 'Unknown user', DEFAULT_HEADERS);
     res.end();
@@ -71,12 +77,13 @@ export const UserController = {
         res.end();
         return;
       }
-      await user.create(body);
+      const { salt, hash } = await createHash(body.password);
+      await user.create({ ...body, password: hash, salt });
       res.writeHead(201, 'User created', DEFAULT_HEADERS);
       res.write(JSON.stringify({ created: true }));
       res.end();
     } catch (e) {
-      res.writeHead(500, e || 'Unknown Error on POST', DEFAULT_HEADERS);
+      res.writeHead(500, e.message || 'Unknown Error on POST', DEFAULT_HEADERS);
       res.end();
     }
   },
@@ -86,6 +93,8 @@ export const UserController = {
   async forgotPassword(req, res) {
     const body = getBody(req);
     const { email } = body;
+    res.writeHead(500, 'Not implemented', DEFAULT_HEADERS);
+    res.end();
   },
   /**
      * Used to search users by login, name, surname, email or phone

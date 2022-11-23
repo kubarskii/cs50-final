@@ -2,7 +2,7 @@ import Base from './base';
 
 export default class Room extends Base {
   /**
-     * @rotected
+     * @protected
      * */
   getTable() {
     return 'rooms';

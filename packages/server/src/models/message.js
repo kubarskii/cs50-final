@@ -18,18 +18,23 @@ export default class Message extends Base {
     return this.db.query(sql, [userId, messageId]);
   }
 
-  async getUnreceivedMessages(userId, roomId) {
+  async getUnreceivedMessages(userId) {
     const sql = `
-            SELECT 
-                   messages.message as message,
-                   messages.created_at as created_at,
-                   messages.user_id as user_id,
-                   messages.room_id as room_id
-            FROM not_received_messages
-                     LEFT JOIN messages on messages.id = not_received_messages.message_id
-            WHERE messages.user_id = $1
-              AND messages.room_id = $2
+      SELECT *
+      FROM not_received_messages
+             LEFT JOIN messages on messages.id = not_received_messages.message_id
+      WHERE not_received_messages.user_id = $1
+    `;
+    const { rows } = await this.db.query(sql, [userId]);
+    return rows;
+  }
+
+  async deleteUnreceivedMessages(userId) {
+    const sql = `
+            DELETE FROM not_received_messages
+            WHERE user_id = $1
         `;
-    return this.db.query(sql, [userId, roomId]);
+    const { rows } = await this.db.query(sql, [userId]);
+    return rows;
   }
 }
