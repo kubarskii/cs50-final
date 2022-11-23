@@ -1,9 +1,6 @@
-import React, {
-  useCallback, useRef, useState,
-} from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Input from '../input/input';
-import { message } from '../../store/slices/messages.slice';
 
 export default function Footer(props) {
   const {
@@ -24,6 +21,8 @@ export default function Footer(props) {
   const [query, setQuery] = useState('');
   const inputRef = useRef(null);
 
+  const { id: roomId } = useSelector((state) => state.rooms.currentRoom);
+
   const onSubmitHandler = (e) => {
     e.preventDefault();
     setQuery(() => '');
@@ -39,47 +38,49 @@ export default function Footer(props) {
     setQuery(value);
   }, []);
 
+  if (!roomId) return null;
+
   return (
     <footer style={{ flexShrink: 0 }}>
       {
-        InputWrapper ? (
-          <InputWrapper
-            inputWrapperStyles={inputWrapperStyles}
-            containerStyles={containerStyles}
-            defaultOnChange={onChangeHandler}
-            defaultOnSubmit={onSubmitHandler}
-            Original={Input}
-            maxConcurrentRequests={maxConcurrentRequests}
-            scroll={scroll}
-            left={left}
-            right={right}
-            inputParser={inputParser}
-            messageParser={messageParser}
-            placeholder={placeholder}
-            buttonTitle={buttonTitle}
-            buttonStyles={buttonStyles}
-          />
-        )
-          : (
-            <Input
-              inputWrapperStyles={inputWrapperStyles}
-              containerStyles={containerStyles}
-              ref={inputRef}
-              onSubmit={onSubmitHandler}
-              onChange={onChangeHandler}
-              value={query}
-              scroll={scroll}
-              maxConcurrentRequests={maxConcurrentRequests}
-              left={left}
-              right={right}
-              inputParser={inputParser}
-              messageParser={messageParser}
-              placeholder={placeholder}
-              buttonTitle={buttonTitle}
-              buttonStyles={buttonStyles}
-            />
-          )
-      }
+                InputWrapper ? (
+                  <InputWrapper
+                    inputWrapperStyles={inputWrapperStyles}
+                    containerStyles={containerStyles}
+                    defaultOnChange={onChangeHandler}
+                    defaultOnSubmit={onSubmitHandler}
+                    Original={Input}
+                    maxConcurrentRequests={maxConcurrentRequests}
+                    scroll={scroll}
+                    left={left}
+                    right={right}
+                    inputParser={inputParser}
+                    messageParser={messageParser}
+                    placeholder={placeholder}
+                    buttonTitle={buttonTitle}
+                    buttonStyles={buttonStyles}
+                  />
+                )
+                  : (
+                    <Input
+                      inputWrapperStyles={inputWrapperStyles}
+                      containerStyles={containerStyles}
+                      ref={inputRef}
+                      onSubmit={onSubmitHandler}
+                      onChange={onChangeHandler}
+                      value={query}
+                      scroll={scroll}
+                      maxConcurrentRequests={maxConcurrentRequests}
+                      left={left}
+                      right={right}
+                      inputParser={inputParser}
+                      messageParser={messageParser}
+                      placeholder={placeholder}
+                      buttonTitle={buttonTitle}
+                      buttonStyles={buttonStyles}
+                    />
+                  )
+            }
 
     </footer>
   );

@@ -46,7 +46,7 @@ export const UserController = {
         res.end();
         return;
       }
-      const isPasswordValid = checkValid(password, salt, encrypted);
+      const isPasswordValid = await checkValid(password, salt, encrypted);
       if (isPasswordValid) {
         const userData = await user.login(login, encrypted);
         const accessToken = JWT.generateJWTForUser(userData);
@@ -77,13 +77,13 @@ export const UserController = {
         res.end();
         return;
       }
-      const { salt, hash } = createHash(body.password);
+      const { salt, hash } = await createHash(body.password);
       await user.create({ ...body, password: hash, salt });
       res.writeHead(201, 'User created', DEFAULT_HEADERS);
       res.write(JSON.stringify({ created: true }));
       res.end();
     } catch (e) {
-      res.writeHead(500, e || 'Unknown Error on POST', DEFAULT_HEADERS);
+      res.writeHead(500, e.message || 'Unknown Error on POST', DEFAULT_HEADERS);
       res.end();
     }
   },

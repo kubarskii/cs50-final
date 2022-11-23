@@ -1,12 +1,15 @@
 import crypto from 'crypto';
+import util from 'util';
 
-export function createHash(password) {
+const pbkdf2 = util.promisify(crypto.pbkdf2);
+
+export async function createHash(password) {
   const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return { salt, hash };
+  const hash = await pbkdf2(password, salt, 1000, 64, 'sha512');
+  return { salt, hash: hash.toString('hex') };
 }
 
-export function checkValid(password, salt, encrypted) {
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return hash === encrypted;
+export async function checkValid(password, salt, encrypted) {
+  const hash = await pbkdf2(password, salt, 1000, 64, 'sha512');
+  return hash.toString('hex') === encrypted;
 }
