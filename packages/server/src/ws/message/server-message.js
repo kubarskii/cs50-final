@@ -1,11 +1,49 @@
-import BaseMessage from './abstract-message';
+import BaseMessage from './base-message';
 import Room from '../../models/room';
 import Message from '../../models/message';
-import { MESSAGE_COMMANDS, MESSAGE_TYPES, UNIQUE_USER } from '../constants';
+import {
+  MESSAGE_COMMANDS, MESSAGE_STATUSES, MESSAGE_TYPES, UNIQUE_USER,
+} from '../constants';
 import db from '../../utils/db';
+import { validateSchema } from '../../utils/schema-validator';
 
 const room = new Room(db);
 const messageModel = new Message(db);
+
+const base = {
+  type: 'object',
+};
+
+const messagePayload = {
+  ...base,
+  properties: {
+    message: {
+      type: 'string',
+      notEmpty: true,
+    },
+    roomId: {
+      type: 'string',
+    },
+  },
+  required: ['message', 'roomId'],
+};
+
+const messagesPayload = {
+  ...base,
+  properties: {
+    roomId: {
+      type: 'string',
+    },
+  },
+  required: ['roomId'],
+};
+
+const schemas = {
+  messages: messagesPayload,
+  message: messagePayload,
+  rooms: base,
+  typing: base,
+};
 
 export default class ServerMessage extends BaseMessage {
   /**
@@ -37,8 +75,15 @@ export default class ServerMessage extends BaseMessage {
   async processMessage() {
     const [_, messageType, payload] = this.value;
     const handler = this[messageType];
-    if (!handler || typeof handler !== 'function') {
+    const schema = schemas[messageType];
+    const schemaValidator = validateSchema(schema || {});
+    const [isValid = true, errorMessage] = schemaValidator(payload);
+    if ((!handler || typeof handler !== 'function')) {
       this.ws.send(JSON.stringify([MESSAGE_TYPES.SERVER_ERROR, { message: `Handler: ${messageType} is not implemented` }]));
+      return;
+    }
+    if (!isValid) {
+      this.ws.send(JSON.stringify([MESSAGE_TYPES.CLIENT_ERROR, { message: errorMessage }]));
       return;
     }
     await handler(payload);
@@ -84,8 +129,14 @@ export default class ServerMessage extends BaseMessage {
      * @param {Set} sockets
      * @param {MessageType} type
      * @param {any} messagePayload
+     * @param {string} [commandType]
      * */
-  async notifyUsersBySockets(sockets, type, messagePayload, commandType = MESSAGE_COMMANDS.MESSAGE) {
+  async notifyUsersBySockets(
+    sockets,
+    type,
+    messagePayload,
+    commandType = MESSAGE_COMMANDS.MESSAGE,
+  ) {
     Array.from(sockets).forEach((socket) => {
       socket.send(JSON.stringify([type, commandType, messagePayload]));
     });
@@ -170,10 +221,6 @@ export default class ServerMessage extends BaseMessage {
       [MESSAGE_TYPES.SERVER_MESSAGE, MESSAGE_COMMANDS.ROOMS, { rows }],
     ));
   }
-
-  // async missed() {
-  //   // const { rows } =
-  // }
 
   async messages(payload) {
     const { roomId } = payload;

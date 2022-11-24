@@ -1,6 +1,6 @@
 import { MESSAGE_COMMANDS, MESSAGE_TYPES } from '../constants';
 import '../../../typedef';
-import BaseMessage from './abstract-message';
+import BaseMessage from './base-message';
 
 /**
  * Basic class for Server Errors occurred on the server check that were not expected

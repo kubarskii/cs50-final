@@ -70,7 +70,7 @@ function onMessage(wss) {
     const ws = this;
     try {
       const dataObj = JSON.parse(data.toString());
-      const [isValid, message] = schemaValidator(dataObj);
+      const [isValid, errorMessage] = schemaValidator(dataObj);
       if (isValid) {
         switch (dataObj[0]) {
           case 1:
@@ -90,7 +90,7 @@ function onMessage(wss) {
             break;
         }
       } else {
-        messageProcessor.process(new ClientErrorMessage(message, ws));
+        messageProcessor.process(new ClientErrorMessage(errorMessage, ws));
       }
     } catch (e) {
       messageProcessor.process(new ServerErrorMessage(e.message, ws));
@@ -116,14 +116,9 @@ const checkTokenIsJWT = (token) => new Promise((resolve, reject) => {
 
 const onConnection = (wss) => async (ws, request) => {
   const parsedUrl = url.parse(request.url, true);
-  /**
-     * @type {string} - JWT token
-     * */
-
   const { token } = parsedUrl.query;
   try {
     const { id } = await checkTokenIsJWT(token);
-    // const missedMessages = user.(id);
     const userData = await user.getById(id);
     if (!userData.rows.length) {
       messageProcessor.process(new ServerErrorMessage('User is not authorized', ws));
