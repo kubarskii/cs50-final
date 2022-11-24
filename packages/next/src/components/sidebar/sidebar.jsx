@@ -9,7 +9,7 @@ import UserInfo from './user-info';
 import Room from './room';
 import debounce from '../../utils/debounce';
 import { UserService } from '../../services/user.service';
-import { PORT } from '../../constants';
+import { PORT } from '../../../constants';
 
 export default function Sidebar() {
   const [token] = useCookie('accessToken');

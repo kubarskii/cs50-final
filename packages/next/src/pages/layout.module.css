@@ -1,0 +1,35 @@
+.container [class="row"] > div:nth-child(odd) {
+    background-color: #769bd3;
+}
+
+.container li:nth-child(odd){
+    background: #ccc;
+}
+
+.container li:hover {
+    background: #2c6ed5;
+}
+
+.sidebarWrapper {
+    overflow: hidden;
+}
+
+.backToContacts {
+    display: none;
+}
+
+.input {
+    position: absolute;
+    visibility: hidden;
+    left: -100000px;
+}
+
+@media (max-width: 768px) {
+    .backToContacts {
+        display: flex;
+    }
+
+    .input:checked + div .sidebar {
+        display: none;
+    }
+}

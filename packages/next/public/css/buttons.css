@@ -1,0 +1,94 @@
+:root{
+    --button-height: 32px;
+}
+
+.btn {
+    padding: 0 8px;
+    cursor: pointer;
+    color: var(--default-black);
+    border-radius: var(--small-border-radius);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    width: fit-content;
+}
+
+.btn:hover {
+    box-shadow: var(--default-shadow);
+}
+
+.btn-s {
+    height: var(--button-height);
+    font-size: var(--small-font-size);
+}
+
+.btn-md {
+    --button-height: 54px;
+    height: var(--button-height);
+    font-size: var(--default-font-size);
+}
+
+.btn-l {
+    --button-height: 64px;
+    height: var(--button-height);
+    font-size: var(--huge-font-size);
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+}
+
+.btn:focus {
+    outline: var(--default-blue) solid 2px;
+}
+
+.btn-primary {
+    background: var(--default-white);
+}
+
+.btn-info {
+    background: var(--default-blue);
+    color: var(--default-white)
+}
+
+.btn-danger {
+    background: var(--default-red);
+    color: var(--default-white)
+}
+
+.btn-success {
+    background: var(--default-green);
+    color: var(--default-white)
+}
+
+.btn-info:hover{
+    background: var(--default-blue-hover);
+}
+.btn-danger:hover{
+    background: var(--default-red-hover);
+}
+.btn-success:hover{
+    background: var(--default-green-hover);
+}
+
+.btn:hover.svg {
+    color: var(--default-blue);
+}
+
+.btn.svg > svg {
+    color: currentColor;
+    fill: currentColor;
+    width: calc(var(--button-height) - var(--button-height) / 2);
+    height: calc(var(--button-height) - var(--button-height) / 2);
+}
+
+.btn-round {
+    border-radius: var(--ellipse-border-radius);
+    width: var(--button-height);
+}
+
+.btn-no-shadow:hover {
+    box-shadow: none;
+}

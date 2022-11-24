@@ -1,0 +1,33 @@
+:root {
+    --app-height: 100%;
+    --default-black: #282828;
+    --default-grey: #ccc;
+    --default-white: #fff;
+
+    --default-blue: rgb(51 144 236);
+    --default-red: rgb(236, 51, 51);
+    --default-green: rgb(1 208 0);
+
+    --default-blue-hover: rgb(40, 113, 182);
+    --default-red-hover: rgb(189, 43, 43);
+    --default-green-hover: rgb(1, 162, 0);
+
+    --default-shadow: rgba(40, 40, 40, 0.3) 0px 2px 4px 2px;
+
+    --small-font-size: .75rem;
+    --default-font-size: 1rem;
+    --big-font-size: 1.15rem;
+    --huge-font-size: 1.5rem;
+    --default-blue-border: 1px solid var(--default-blue);
+
+    --small-border-radius: 4px;
+    --default-border-radius: 10px;
+    --ellipse-border-radius: 50%;
+    --rounded-border-radius: 999999999px;
+
+    --breakpoint-s: 576px;
+    --breakpoint-m: 768px;
+    --breakpoint-l: 992px;
+    --breakpoint-xl: 1200px;
+    --breakpoint-xxl: 1400px;
+}

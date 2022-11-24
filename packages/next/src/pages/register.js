@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import Router from 'next/router';
 import { UserService } from '../services/user.service';
-import { PORT } from '../constants';
+import { PORT } from '../../constants';
 
 function RegisterPage() {
   const registerFormRef = useRef();

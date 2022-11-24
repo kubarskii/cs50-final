@@ -8,7 +8,7 @@ import { messagesActions } from '../store/slices/messages.slice';
 import { current, roomActions } from '../store/slices/room.slice';
 import { store } from '../store/store';
 import ChatContainerComponent from '../components/chat-container/chat-container.component';
-import { HOST, PORT } from '../constants';
+import { HOST, PORT } from '../../constants';
 
 const onMessage = (play) => ({ data }) => {
   const parsedData = JSON.parse(data);
