@@ -1,4 +1,4 @@
-/** @typedef {import('./abstract-message.js')} BaseMessage */
+/** @typedef {import('./base-message.js')} BaseMessage */
 
 export default class MessageProcessor {
   /**
@@ -6,7 +6,6 @@ export default class MessageProcessor {
      * @return {void}
      * */
   process(message) {
-    message.send().then(() => {
-    });
+    message.send();
   }
 }

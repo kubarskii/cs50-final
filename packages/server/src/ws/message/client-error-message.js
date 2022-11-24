@@ -1,6 +1,6 @@
 import { MESSAGE_COMMANDS, MESSAGE_TYPES } from '../constants';
 import '../../../typedef';
-import BaseMessage from './abstract-message';
+import BaseMessage from './base-message';
 
 export default class ClientErrorMessage extends BaseMessage {
   /**

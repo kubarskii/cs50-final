@@ -185,11 +185,20 @@ const isValidObject = (v) => (schema) => {
   return res;
 };
 
+const checkCanBeEmpty = (v) => (schema) => {
+  const { notEmpty } = schema;
+  if (!v && notEmpty) {
+    return [false, 'Value is not provided'];
+  }
+  return valid;
+};
+
 const isValidPrimitive = (v) => (schema) => {
   const validator = validatorChain(schema);
   const { res } = validator
     .check(isProperTypes(v))
-    .check(checkIn(v));
+    .check(checkIn(v))
+    .check(checkCanBeEmpty(v));
   return res;
 };
 
@@ -199,8 +208,9 @@ const isValidPrimitive = (v) => (schema) => {
  * */
 export function validateSchema(schema) {
   return (obj) => {
+    if (!schema) return [true, 'Schema was not passed'];
     const { type } = schema;
-    if (!type) return [false, `Unknown type passed: ${type}`];
+    if (!type) return [true, `Unknown type passed: ${type}`];
     const checker = validatorChain(schema);
     switch (type) {
       case 'array':
