@@ -46,18 +46,6 @@ export default function Sidebar() {
         ))}
       </div>
       )}
-      <button
-        type="submit"
-        style={{ width: '100%', border: '1px solid black' }}
-        onClick={async () => {
-          await RoomService.createRoom(token, {
-            userIds: [2],
-            name: 'nut',
-          });
-        }}
-      >
-        nut
-      </button>
       {connectionStatus !== 'Open' && (
       <div className={styles.connectionStatus}>
         <p>{connectionStatus}</p>

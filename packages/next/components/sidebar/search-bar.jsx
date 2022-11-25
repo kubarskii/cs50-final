@@ -9,22 +9,25 @@ export default function SearchBar(props) {
   const { token } = props;
   const [searchString, setSearchString] = React.useState("");
   const [searchActive, setSearchActive] = React.useState(false);
+  
+  const debouncer = () => debounce(fetchUsers, 500)()
 
-  const onChange = async (e) => {
+  const onChange = (e) => {
     const search = e.target.value;
     setSearchString(search);
+
     if (search.length > 0) {
       setSearchActive(true);
     } else {
       setSearchActive(false);
     }
-    console.log(searchActive);
-    // debouncer();
+    debouncer();
   };
 
   async function fetchUsers() {
+    console.log('fetching',searchString);
     const { hostname, protocol } = window.location;
-    if (searchString >= 2) {
+    if (searchString.length >= 2) {
       const resp = await UserService.findUser(
         token,
         searchString,
@@ -34,11 +37,6 @@ export default function SearchBar(props) {
     }
   }
 
-  const debouncer = React.useMemo(() => debounce(fetchUsers, 300), [token]);
-
-  //   const handler = React.useMemo(() => debounce(onChange, 300), [token]);
-
-  // TODO
   const clear = () => {
     setSearchString("");
     setSearchActive(false);
@@ -60,7 +58,7 @@ export default function SearchBar(props) {
           value={searchString}
           type="text"
           placeholder="Search"
-          onChange={(e) => onChange(e)}
+          onChange={onChange}
         />
 
         {searchActive && (
