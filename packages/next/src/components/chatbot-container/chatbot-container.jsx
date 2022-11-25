@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
 import Sidebar from '../sidebar/sidebar';
 import { WebsocketContext } from '../../context/websocket.context';
@@ -8,7 +8,9 @@ import styles from './chatbot-container.module.css';
 import InputWrapper from '../input-wrapper/input-wrapper.component';
 import Container from '../container/container';
 import Header from '../header/header';
-import MEButton, { SVGIcon } from '../button/button.component';
+import { SVGIcon } from '../button/button.component';
+import { current } from '../../store/slices/room.slice';
+import nonce from '../../utils/nonce';
 
 export default function ChatbotContainer() {
   const { sendMessage, readyState } = useContext(WebsocketContext);
@@ -31,6 +33,8 @@ export default function ChatbotContainer() {
     }
   }, [roomId]);
 
+  const dispatch = useDispatch();
+
   return (
     <div className={combineClasses('row nowrap overflow-hidden', styles.fillHeight)}>
       <input
@@ -40,14 +44,23 @@ export default function ChatbotContainer() {
         name="asideCB"
         className={combineClasses(styles.hiddenCheckbox)}
       />
-      <div className={combineClasses('col-md-4', styles.asideWrapper)}>
+      <div className={combineClasses('col-md-4 overflow-hidden', styles.asideWrapper)}>
         <Sidebar />
       </div>
-      <div className={combineClasses('col-auto', styles.contentWrapper)}>
+      <div className={combineClasses('col-auto overflow-hidden', styles.contentWrapper)}>
         <div className="row nowrap">
           <label
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                asideCheckBoxRef.current.click();
+              }
+            }}
             htmlFor="asideCB"
             className={combineClasses('btn svg btn-no-shadow', styles.backButton)}
+            onClick={() => {
+              dispatch(current({ id: null, name: null }));
+            }}
           >
             <SVGIcon type="back" />
           </label>

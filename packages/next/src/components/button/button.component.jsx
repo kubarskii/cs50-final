@@ -32,6 +32,7 @@ export default function MEButton(props) {
 
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       className={className}

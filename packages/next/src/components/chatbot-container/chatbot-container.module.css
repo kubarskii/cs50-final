@@ -1,16 +1,18 @@
 
 .fillHeight {
     flex: 1;
-    height: var(--app-height)
+    max-height: var(--app-height);
 }
 
 .contentWrapper {
-    height: var(--app-height)
+    flex: 1;
+    max-height: var(--app-height);
 }
 
 .asideWrapper {
     transition: flex-basis .2s;
     max-width: 300px;
+    z-index: 1000;
 }
 
 .hiddenCheckbox:checked + .asideWrapper {
@@ -38,8 +40,11 @@
         display: flex;
     }
 
+    .hiddenCheckbox:checked + .contentWrapper {
+        display: none;
+    }
+
     .hiddenCheckbox:checked  + .asideWrapper {
-        /*display: none;*/
         flex-basis: 0;
         overflow: hidden;
     }
