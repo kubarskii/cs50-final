@@ -20,7 +20,7 @@ export default function Room(props) {
   return (
     <div
       className={[isSelected ? styles.selected : '', styles.roomComponent].join(' ')}
-      onPointerDown={() => onChatSelect(roomId, roomName)}
+      onClick={() => onChatSelect(roomId, roomName)}
       key={roomId}
     >
       {roomName}
