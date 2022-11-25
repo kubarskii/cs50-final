@@ -4,17 +4,14 @@ import Input from '../input/input';
 
 export default function Footer(props) {
   const {
+    buttonTitle,
     left,
     right,
-    messageParser,
-    inputParser,
     placeholder,
     InputWrapper,
     scroll,
-    maxConcurrentRequests,
     inputWrapperStyles,
     containerStyles,
-    buttonTitle,
     buttonStyles,
   } = props;
 
@@ -50,12 +47,9 @@ export default function Footer(props) {
                     defaultOnChange={onChangeHandler}
                     defaultOnSubmit={onSubmitHandler}
                     Original={Input}
-                    maxConcurrentRequests={maxConcurrentRequests}
                     scroll={scroll}
                     left={left}
                     right={right}
-                    inputParser={inputParser}
-                    messageParser={messageParser}
                     placeholder={placeholder}
                     buttonTitle={buttonTitle}
                     buttonStyles={buttonStyles}
@@ -70,11 +64,8 @@ export default function Footer(props) {
                       onChange={onChangeHandler}
                       value={query}
                       scroll={scroll}
-                      maxConcurrentRequests={maxConcurrentRequests}
                       left={left}
                       right={right}
-                      inputParser={inputParser}
-                      messageParser={messageParser}
                       placeholder={placeholder}
                       buttonTitle={buttonTitle}
                       buttonStyles={buttonStyles}

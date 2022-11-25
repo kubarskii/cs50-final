@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './header.module.css';
 import Logo from './logo/logo';
+import MEButton from '../button/button.component';
 
 export default function Header(props) {
   const {
@@ -12,12 +13,12 @@ export default function Header(props) {
     logoStyles,
     controlContainerStyles,
     titleStyle = {},
-    controls, // buttons
+    controls,
   } = props;
 
   return (
     <div className={['header', styles.headerContainer].join(' ')} style={headerStyles}>
-      { (!!(custom || imgSrc)) && (
+      {(!!(custom || imgSrc)) && (
       <Logo
         custom={custom}
         logoContainerStyle={logoContainerStyle}

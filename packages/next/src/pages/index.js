@@ -7,8 +7,8 @@ import { pendingRequests, WebsocketsProvider } from '../context/websocket.contex
 import { messagesActions } from '../store/slices/messages.slice';
 import { current, roomActions } from '../store/slices/room.slice';
 import { store } from '../store/store';
-import ChatContainerComponent from '../components/chat-container/chat-container.component';
-import { HOST, PORT } from '../../constants';
+import { PORT } from '../../constants';
+import ChatbotContainer from '../components/chatbot-container/chatbot-container';
 
 const onMessage = (play) => ({ data }) => {
   const parsedData = JSON.parse(data);
@@ -103,7 +103,7 @@ function HomePage(props) {
 
   return (
     <WebsocketsProvider port={PORT} hostname={hostname} onMessage={onMessage(play)}>
-      <ChatContainerComponent />
+      <ChatbotContainer />
       <audio ref={audioPlayerRef} />
     </WebsocketsProvider>
   );

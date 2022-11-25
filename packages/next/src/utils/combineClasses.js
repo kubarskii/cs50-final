@@ -1,1 +1,1 @@
-export const combineClasses = (...classesList) => classesList.join(' ');
+export const combineClasses = (...classesList) => classesList.filter(Boolean).join(' ');
