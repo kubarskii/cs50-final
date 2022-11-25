@@ -68,7 +68,12 @@ export function WebsocketsProvider(props) {
     },
   );
 
-  const getReadyState = () => readyState;
+  useEffect(() => {
+    const u = pendingRequests.subscribe((v) => {
+      // console.log(v);
+    });
+    return () => u();
+  }, []);
 
   const sendMessageHOF = (data) => {
     sendMessage(data);
