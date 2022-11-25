@@ -10,7 +10,6 @@ import Container from '../container/container';
 import Header from '../header/header';
 import { SVGIcon } from '../button/button.component';
 import { current } from '../../store/slices/room.slice';
-import nonce from '../../utils/nonce';
 
 export default function ChatbotContainer() {
   const { sendMessage, readyState } = useContext(WebsocketContext);

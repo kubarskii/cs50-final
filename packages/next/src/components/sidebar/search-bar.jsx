@@ -2,8 +2,10 @@ import React from "react";
 import styles from "./sidebar.module.css";
 import { UserService } from "../../services/user.service";
 import debounce from "../../utils/debounce";
-import { PORT } from "../../constants";
 import { CrossIcon, SearchIcon } from "../icons/icons";
+import { PORT } from "../../../constants";
+import { setUsers } from "../../store/slices/found-users.slice";
+import { useDispatch } from "react-redux";
 
 export default function SearchBar(props) {
   const { token } = props;
@@ -11,6 +13,7 @@ export default function SearchBar(props) {
   const [searchActive, setSearchActive] = React.useState(false);
   
   const debouncer = () => debounce(fetchUsers, 500)()
+  const dispatch = useDispatch();
 
   const onChange = (e) => {
     const search = e.target.value;
@@ -25,7 +28,6 @@ export default function SearchBar(props) {
   };
 
   async function fetchUsers() {
-    console.log('fetching',searchString);
     const { hostname, protocol } = window.location;
     if (searchString.length >= 2) {
       const resp = await UserService.findUser(
@@ -33,7 +35,7 @@ export default function SearchBar(props) {
         searchString,
         `${protocol}//${hostname}:${PORT}`
       );
-      return resp;
+      dispatch(setUsers(resp))
     }
   }
 

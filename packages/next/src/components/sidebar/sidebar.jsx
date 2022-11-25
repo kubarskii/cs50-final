@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
 import { JWT } from '@me/server/src/utils/jwt';
 import styles from './sidebar.module.css';
-import { RoomService } from '../../services/room.service';
 import useCookie from '../../hooks/useCookie';
 import UserInfo from './user-info';
 import Room from './room';
