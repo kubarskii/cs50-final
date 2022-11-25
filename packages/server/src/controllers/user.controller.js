@@ -40,7 +40,7 @@ export const UserController = {
     const auth = req.headers.authorization;
     const { type, payload: { login, password } } = authHeaderParser(auth);
     if (type.toLowerCase() === 'basic' && login && password) {
-      const { salt, password: encrypted } = await user.getByLogin(login);
+      const { salt, password: encrypted } = await user.getByLogin(login) || {};
       if (!salt) {
         res.writeHead(401, 'Unknown user', DEFAULT_HEADERS);
         res.end();

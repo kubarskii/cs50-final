@@ -18,7 +18,7 @@ function LayoutComponent() {
         <p>Try clicking on list item and arrow btn when screen is small</p>
         <input ref={checkBoxRef} name="show" type="checkbox" id="show" className={styles.input} />
         <div className={combineClasses('row', 'nowrap', styles.sidebarWrapper)}>
-          <div className={combineClasses('col-md-4', styles.sidebar)}>
+          <div className={combineClasses('col-md-3', styles.sidebar)}>
             <aside>
               <ul>
                 {
@@ -36,7 +36,7 @@ function LayoutComponent() {
               </ul>
             </aside>
           </div>
-          <div className="col-md-8" style={{ background: '#e6e6e6', padding: 0 }}>
+          <div className="col-auto" style={{ background: '#e6e6e6', padding: 0 }}>
             <header style={{ background: '#fff' }}>
               <div className="row">
                 <label
@@ -61,6 +61,24 @@ function LayoutComponent() {
             </header>
             <div>
               Content
+            </div>
+          </div>
+          <div className={combineClasses('col-md-3')} style={{ maxWidth: '50%' }}>
+            <div>
+              <ul>
+                {
+                Array(5)
+                  .fill(null)
+                  .map((el, index) => index + 1)
+                  .map((el, i) => (
+                    <li style={{ cursor: 'pointer' }} key={i}>
+                      {' '}
+                      Contact
+                      {el}
+                    </li>
+                  ))
+                }
+              </ul>
             </div>
           </div>
         </div>

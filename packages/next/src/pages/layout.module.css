@@ -24,12 +24,19 @@
     left: -100000px;
 }
 
+
+.input:checked + div .sidebar {
+    transition: flex-basis .1s;
+    overflow: hidden;
+}
+
 @media (max-width: 768px) {
     .backToContacts {
         display: flex;
     }
 
     .input:checked + div .sidebar {
-        display: none;
+        /*display: none;*/
+        flex-basis: 0;
     }
 }
