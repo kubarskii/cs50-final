@@ -41,7 +41,7 @@
     }
 
     .hiddenCheckbox:checked + .contentWrapper {
-        display: none;
+        /*display: none;*/
     }
 
     .hiddenCheckbox:checked  + .asideWrapper {

@@ -7,7 +7,7 @@
     position: relative;
 }
 
-@media screen and (max-width: 660px) {
+@media screen and (max-width: 768px) {
     .asideComponent {
         max-width: 100vw;
         width: 100vw;
@@ -39,15 +39,23 @@
 
 .roomComponent {
     display: flex;
+    flex-direction: column;
     box-sizing: border-box;
     height: 3rem;
     cursor: pointer;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
     margin: 0 0.3rem;
-    font-weight: bold;
-    align-items: center;
     padding: 0.5rem;
+}
+
+.roomComponent p {
+    font-size: .75rem;
+    color: var(--cool-grey);
+    font-weight: lighter;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .roomComponent:hover {
@@ -58,6 +66,10 @@
 .roomComponent.selected {
     background-color: rgb(51 144 236);
     color: #fff;
+}
+
+.roomComponent.selected p {
+    color: currentColor;
 }
 
 .connectionStatus {

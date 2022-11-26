@@ -31,16 +31,17 @@ export default function Sidebar() {
   return (
     <aside className={styles.asideComponent}>
       <UserInfo name={name} surname={surname} />
-      <SearchBar token={token}/>
+      <SearchBar token={token} />
       {!!rooms && !!rooms.length && (
       <div>
-        {rooms.map(({ id: elRoomId, name: roomName }) => (
+        {rooms.map(({ id: elRoomId, name: roomName, last_message: lastMessage }) => (
           <Room
             isSelected={elRoomId === currentRoomId}
             roomId={elRoomId}
             roomName={roomName}
             userId={userId}
             key={elRoomId}
+            lastMessage={lastMessage}
           />
         ))}
       </div>

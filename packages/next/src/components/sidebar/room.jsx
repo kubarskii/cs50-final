@@ -7,6 +7,7 @@ export default function Room(props) {
   const {
     roomId,
     roomName,
+    lastMessage = '',
     userId: id,
     isSelected,
   } = props;
@@ -23,7 +24,13 @@ export default function Room(props) {
       onClick={() => onChatSelect(roomId, roomName)}
       key={roomId}
     >
-      {roomName}
+      <div className="row">
+        <div />
+        <div>
+          <h5><b>{roomName}</b></h5>
+          <p>{lastMessage}</p>
+        </div>
+      </div>
     </div>
   );
 }
