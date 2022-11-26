@@ -7,7 +7,6 @@ import useWebSocket, { ReadyState } from 'react-use-websocket';
 import useCookie from '../hooks/useCookie';
 import { stateChange } from '../store/slices/chatbot-status.slice';
 import { isBrowser } from '../utils/isBrowser';
-
 export const WebsocketContext = React.createContext(null);
 
 WebsocketsProvider.propTypes = {
@@ -50,7 +49,7 @@ export function WebsocketsProvider(props) {
 
   if (!isBrowser) return null;
 
-  const [token] = useCookie('accessToken');
+  const [ ] = useCookie('accessToken');
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
 

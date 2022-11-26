@@ -13,7 +13,7 @@ import { current } from '../../store/slices/room.slice';
 
 export default function ChatbotContainer() {
   const { sendMessage, readyState } = useContext(WebsocketContext);
-  const { id: roomId = '' } = useSelector((state) => state.rooms.currentRoom);
+  const { id: roomId = '', name: roomName = '' } = useSelector((state) => state.rooms.currentRoom);
 
   useEffect(() => {
     if (readyState === ReadyState.OPEN) {
@@ -65,7 +65,7 @@ export default function ChatbotContainer() {
           </label>
           <Header
             {...{
-              title: 'Test title',
+              title: `${roomName}`,
               logoStyles: {
                 marginRight: '6px',
               },
