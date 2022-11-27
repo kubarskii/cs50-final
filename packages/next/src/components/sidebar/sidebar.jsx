@@ -13,6 +13,8 @@ export default function Sidebar() {
   const decoded = JWT.decoderJWT(token);
   const { name, surname, id: userId } = decoded;
   const rooms = useSelector((state) => state.rooms.rooms);
+  // const members = useSelector((state) => state.rooms.roomMembers);
+
   const { wsStatus: { wsState: readyState } } = useSelector((state) => state);
   const { id: currentRoomId } = useSelector((state) => state.rooms.currentRoom);
 

@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, {
+  useContext, useEffect, useMemo, useRef,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
 import Sidebar from '../sidebar/sidebar';
@@ -10,6 +12,7 @@ import Container from '../container/container';
 import Header from '../header/header';
 import { SVGIcon } from '../button/button.component';
 import { current } from '../../store/slices/room.slice';
+import { messages } from '../../store/slices/messages.slice';
 
 export default function ChatbotContainer() {
   const { sendMessage, readyState } = useContext(WebsocketContext);
@@ -33,6 +36,34 @@ export default function ChatbotContainer() {
   }, [roomId]);
 
   const dispatch = useDispatch();
+  const headerStylesProps = useMemo(() => ({
+    logoStyles: {
+      marginRight: '6px',
+    },
+    logoContainerStyle: {
+      minHeight: 0,
+      minWidth: 0,
+      maxHeight: '100%',
+      height: '100%',
+    },
+    titleStyle: {
+      fontWeight: '400',
+    },
+    headerStyles: {
+      background: '#fff',
+      minHeight: '56px',
+      display: 'flex',
+      alignItems: 'center',
+      boxSizing: 'border-box',
+      padding: '0 12px',
+      fontSize: '1rem',
+    },
+  }), [false]);
+
+  const backHandler = () => {
+    dispatch(messages({ rows: [] }));
+    dispatch(current({ id: null, name: null }));
+  };
 
   return (
     <div className={combineClasses('row nowrap overflow-hidden', styles.fillHeight)}>
@@ -57,37 +88,13 @@ export default function ChatbotContainer() {
             }}
             htmlFor="asideCB"
             className={combineClasses('btn svg btn-no-shadow', styles.backButton)}
-            onClick={() => {
-              dispatch(current({ id: null, name: null }));
-            }}
+            onClick={backHandler}
           >
             <SVGIcon type="back" />
           </label>
           <Header
-            {...{
-              title: `${roomName}`,
-              logoStyles: {
-                marginRight: '6px',
-              },
-              logoContainerStyle: {
-                minHeight: 0,
-                minWidth: 0,
-                maxHeight: '100%',
-                height: '100%',
-              },
-              titleStyle: {
-                fontWeight: '400',
-              },
-              headerStyles: {
-                background: '#fff',
-                minHeight: '56px',
-                display: 'flex',
-                alignItems: 'center',
-                boxSizing: 'border-box',
-                padding: '0 12px',
-                fontSize: '1rem',
-              },
-            }}
+            title={roomName}
+            {...headerStylesProps}
           />
         </div>
         <Container

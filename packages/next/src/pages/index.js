@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { JWT } from '@me/server/src/utils/jwt';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { getCookie } from '../hooks/useCookie';
 import { pendingRequests, WebsocketsProvider } from '../context/websocket.context';
@@ -47,10 +47,16 @@ function HomePage(props) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { roomId } = router.query;
+  const room = useSelector((state) => state.rooms.rooms.find((el) => el.id === roomId));
+
+  const setInitialRef = useRef(false);
 
   useEffect(() => {
-    if (roomId) dispatch(current({ id: roomId }));
-  }, [roomId]);
+    if (roomId && room && !setInitialRef.current) {
+      setInitialRef.current = true;
+      dispatch(current(room));
+    }
+  }, [roomId, room]);
 
   if (!token) {
     return null;

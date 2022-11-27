@@ -36,19 +36,26 @@ export default class Room extends Base {
   }
 
   async getUserRooms(userId) {
-    const sql = `SELECT rooms.id, rooms.name, m.message as last_message
-                 FROM rooms AS rooms
-                        INNER JOIN room_members AS members ON rooms.id = members.room_id
-                        INNER JOIN users ON members.user_id = users.id
-                        LEFT JOIN (
-                   SELECT *
-                   FROM messages
-                   WHERE messages.id in
-                         (SELECT max(id)
-                          FROM messages
-                          GROUP BY room_id)
-                 ) as m on rooms.id = m.room_id
-                 WHERE users.id = $1`;
+    const sql = `
+            SELECT rooms.id,
+                   rooms.name,
+                   m.message as last_message
+--                    members.user_id
+            FROM rooms AS rooms
+                     LEFT JOIN room_members AS members ON rooms.id = members.room_id
+                     LEFT JOIN users ON members.user_id = users.id
+                     LEFT JOIN (
+                SELECT *
+                FROM messages
+                WHERE messages.id in
+                      (SELECT max(id)
+                       FROM messages
+                       GROUP BY room_id
+                      )
+            ) as m on rooms.id = m.room_id
+            WHERE users.id = $1
+            ORDER BY m.created_at DESC NULLS LAST
+        `;
     const { rows } = await this.db.query(sql, [userId]);
     if (rows.length) {
       return rows;
