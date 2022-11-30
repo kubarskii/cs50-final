@@ -25,7 +25,6 @@ export default function App({ Component, pageProps }) {
         <Head>
           <title>Message me!</title>
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-          <script src="/sw.js" defer />
         </Head>
         <Component {...pageProps} />
       </RouteGuard>
