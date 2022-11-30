@@ -1,5 +1,5 @@
-import pg from 'pg';
-import { config } from '../db/config';
+const pg = require('pg');
+const { config } = require('../db/config');
 
 const pool = new pg.Pool(config);
 
@@ -76,4 +76,4 @@ const db = (table) => ({
   },
 });
 
-export default db;
+module.exports = db;

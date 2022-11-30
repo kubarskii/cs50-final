@@ -1,9 +1,8 @@
+import { NOTIFICATIONS_PORT } from '@me/notifications/constants';
 import BaseMessage from './base-message';
 import Room from '../../models/room';
 import Message from '../../models/message';
-import {
-  MESSAGE_COMMANDS, MESSAGE_STATUSES, MESSAGE_TYPES, UNIQUE_USER,
-} from '../constants';
+import { MESSAGE_COMMANDS, MESSAGE_TYPES, UNIQUE_USER } from '../constants';
 import db from '../../utils/db';
 import { validateSchema } from '../../utils/schema-validator';
 
@@ -211,6 +210,16 @@ export default class ServerMessage extends BaseMessage {
     await this.notifyUsersBySockets(sockets, 1, messagePayload);
     // eslint-disable-next-line no-restricted-syntax
     for await (const userOfflineId of [...offline]) {
+      /**
+       * TODO: REMOVE hardcoded URL
+       * */
+      await fetch(`http://localhost:${NOTIFICATIONS_PORT}/notify`, {
+        method: 'POST',
+        body: JSON.stringify({
+          userId: userOfflineId,
+          payload: { title: 'New Message Received!' },
+        }),
+      }).catch(console.error);
       await messageModel.saveUnReceivedMessage(userOfflineId, createdMessageId);
     }
   }

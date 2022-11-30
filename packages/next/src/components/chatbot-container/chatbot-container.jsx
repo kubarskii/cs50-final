@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useContext, useEffect, useMemo, useRef,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -60,10 +61,10 @@ export default function ChatbotContainer() {
     },
   }), [false]);
 
-  const backHandler = () => {
+  const backHandler = useCallback(() => {
     dispatch(messages({ rows: [] }));
     dispatch(current({ id: null, name: null }));
-  };
+  }, []);
 
   return (
     <div className={combineClasses('row nowrap overflow-hidden', styles.fillHeight)}>

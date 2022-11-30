@@ -1,15 +1,6 @@
-/**
- * @typedef {import('http').RequestListener} RequestListener
- * */
+const mix = require('./mix');
 
-/**
- * @typedef { string | number | boolean | RequestListener } RouteAction
- * */
-
-/**
- * @param {IncomingMessage} stream
- * */
-export const getBody = (stream) => new Promise((resolve, reject) => {
+const getBody = (stream) => new Promise((resolve, reject) => {
   const bodyParts = [];
   /**
      * @type {(c: any) => number}
@@ -27,3 +18,12 @@ export const getBody = (stream) => new Promise((resolve, reject) => {
   stream.on('end', partsToJSON);
   stream.on('error', (e) => reject(e));
 });
+
+const additional = {
+  async body() {
+    return getBody(this);
+  },
+};
+
+const mixReq = (req) => mix(req, additional);
+module.exports = mixReq;

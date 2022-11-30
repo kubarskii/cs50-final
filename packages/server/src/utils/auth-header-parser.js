@@ -1,12 +1,12 @@
-import jwt from 'jsonwebtoken';
-import { SECRET_KEY } from './jwt';
+const jwt = require('jsonwebtoken');
+const { SECRET_KEY } = require('./jwt');
 
 const AUTH_TYPES = {
   BASIC: 'basic',
   BEARER: 'bearer',
 };
 
-export default function authHeaderParser(header = '') {
+module.exports = function authHeaderParser(header = '') {
   const authArr = header.split(' ');
   if (authArr.length === 1) {
     return {
@@ -58,4 +58,4 @@ export default function authHeaderParser(header = '') {
     }
   }
   return {};
-}
+};

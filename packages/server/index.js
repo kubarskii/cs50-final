@@ -1,9 +1,9 @@
 import http from 'http';
+import Router from '@me/router';
 import { UserController } from './src/controllers/user.controller';
 import { RoomController } from './src/controllers/room.controller';
 import runWS from './src/ws';
 import { REST_API_PORT } from './constants';
-import Router from './src/utils/router';
 
 const srv = http.createServer();
 const router = new Router(srv, '/rest/api');

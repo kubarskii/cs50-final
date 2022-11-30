@@ -1,15 +1,16 @@
-DROP TABLE IF EXISTS statuses ;
+DROP TABLE IF EXISTS statuses;
 DROP TABLE IF EXISTS not_received_messages;
 DROP TABLE IF EXISTS room_members;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS rooms;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS notifications;
 
 CREATE TABLE statuses
 (
-    id         bigint generated always as identity,
-    name       varchar NOT NULL
+    id   bigint generated always as identity,
+    name varchar NOT NULL
 );
 
 ALTER TABLE statuses
@@ -64,7 +65,7 @@ CREATE UNIQUE INDEX akUsersLogin ON users (login);
 CREATE TABLE session
 (
     id      bigint generated always as identity,
-    user_id integer     NOT NULL,
+    user_id integer NOT NULL,
     token   varchar NOT NULL,
     ip      varchar NOT NULL
 );
@@ -118,3 +119,20 @@ ALTER TABLE not_received_messages
 
 ALTER TABLE not_received_messages
     ADD CONSTRAINT fkMessageId FOREIGN KEY (message_id) REFERENCES messages (id) ON DELETE CASCADE;
+
+
+CREATE TABLE notifications
+(
+    id             bigint generated always as identity,
+    user_id        bigint,
+    endpoint       varchar NOT NULL,
+    expiration_time timestamp default null,
+    p256dh         varchar NOT NULL,
+    auth           varchar NOT NULL
+);
+
+ALTER TABLE notifications
+    ADD CONSTRAINT pkNotifications PRIMARY KEY (id);
+
+ALTER TABLE notifications
+    ADD CONSTRAINT fkUserId FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;

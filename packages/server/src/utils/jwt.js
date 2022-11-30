@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
+const jwt = require('jsonwebtoken');
 
-export const SECRET_KEY = 'some-secret-key';
+const SECRET_KEY = 'some-secret-key';
 
-export const JWT = {
+const JWT = {
   generateJWTForUser(user) {
     const authToken = jwt.sign(user, SECRET_KEY);
     return authToken;
@@ -11,4 +11,9 @@ export const JWT = {
     const decoded = jwt.verify(accessToken, SECRET_KEY);
     return decoded;
   },
+};
+
+module.exports = {
+  JWT,
+  SECRET_KEY,
 };

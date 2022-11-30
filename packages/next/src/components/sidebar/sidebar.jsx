@@ -8,13 +8,30 @@ import UserInfo from './user-info';
 import Room from './room';
 import SearchBar from './search-bar';
 
+export function RoomsList(props) {
+  const { currentRoomId, userId } = props;
+  const rooms = useSelector((state) => state.rooms.rooms);
+
+  return (
+    <>
+      {rooms.map(({ id: elRoomId, name: roomName, last_message: lastMessage }) => (
+        <Room
+          isSelected={elRoomId === currentRoomId}
+          roomId={elRoomId}
+          roomName={roomName}
+          userId={userId}
+          key={elRoomId}
+          lastMessage={lastMessage}
+        />
+      ))}
+    </>
+  );
+}
+
 export default function Sidebar() {
   const [token] = useCookie('accessToken');
   const decoded = JWT.decoderJWT(token);
   const { name, surname, id: userId } = decoded;
-  const rooms = useSelector((state) => state.rooms.rooms);
-  // const members = useSelector((state) => state.rooms.roomMembers);
-
   const { wsStatus: { wsState: readyState } } = useSelector((state) => state);
   const { id: currentRoomId } = useSelector((state) => state.rooms.currentRoom);
 
@@ -34,20 +51,12 @@ export default function Sidebar() {
     <aside className={styles.asideComponent}>
       <UserInfo name={name} surname={surname} />
       <SearchBar token={token} />
-      {!!rooms && !!rooms.length && (
       <div>
-        {rooms.map(({ id: elRoomId, name: roomName, last_message: lastMessage }) => (
-          <Room
-            isSelected={elRoomId === currentRoomId}
-            roomId={elRoomId}
-            roomName={roomName}
-            userId={userId}
-            key={elRoomId}
-            lastMessage={lastMessage}
-          />
-        ))}
+        <RoomsList
+          currentRoomId={currentRoomId}
+          userId={userId}
+        />
       </div>
-      )}
       {connectionStatus !== 'Open' && (
       <div className={styles.connectionStatus}>
         <p>{connectionStatus}</p>

@@ -40,6 +40,29 @@ export async function getServerSideProps(context) {
   return { props: { host: host.host } };
 }
 
+const publicVapidKey = 'BDaUFua706VttVFcxXxrBne9IxhsxcJBiPFjFOlurdPgr3JCFlK56lDL4lCrxYvkTm55UYtpwgF-UTBvyzgT7YM';
+
+async function run(token, hostname, port) {
+  const registration = await navigator.serviceWorker
+    .register('/worker.js', { scope: '/' });
+
+  const subscription = await registration.pushManager
+    .subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: publicVapidKey,
+    });
+
+  await fetch(`http://${hostname}:${port}/subscribe`, {
+    method: 'POST',
+    body: JSON.stringify(subscription),
+    headers: {
+      'content-type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    withCredentials: true,
+  });
+}
+
 function HomePage(props) {
   const { host } = props;
   const [hostname, port = 80] = host.split(':');
@@ -57,6 +80,16 @@ function HomePage(props) {
       dispatch(current(room));
     }
   }, [roomId, room]);
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      run(token, hostname, 3006)
+        .then(() => {
+          console.log('Service working is running correctly');
+        })
+        .catch(console.error);
+    }
+  }, [token]);
 
   if (!token) {
     return null;
