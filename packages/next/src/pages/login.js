@@ -61,9 +61,9 @@ function LoginPage() {
                     </div>
                   </div>
                 </div>
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', marginTop: '8px' }}>
                   <a
-                    className="btn btn--radius-2 btn--red"
+                    className="btn btn-danger btn-md"
                     style={{ border: '1px solid #ccc' }}
                     href="/register"
                   >
@@ -71,7 +71,7 @@ function LoginPage() {
                   </a>
                   <button
                     style={{ marginLeft: '12px', flex: 1 }}
-                    className="btn btn--radius-2 btn--blue"
+                    className="btn btn-info btn-md"
                     type="submit"
                   >
                     Sign in

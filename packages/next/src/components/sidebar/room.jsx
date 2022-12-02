@@ -6,7 +6,7 @@ import { current } from '../../store/slices/room.slice';
 export default function Room(props) {
   const {
     roomId,
-    sender,
+    sender = {},
     roomName,
     lastMessage = '',
     userId: id,
@@ -14,8 +14,8 @@ export default function Room(props) {
   } = props;
 
   const {
-    user_name: userName,
-    user_surname: userSurname,
+    user_name: userName = '',
+    user_surname: userSurname = '',
   } = sender;
 
   const dispatch = useDispatch();
@@ -52,6 +52,7 @@ export default function Room(props) {
         </div>
         <div>
           <h5><b>{roomName}</b></h5>
+          { !!(userName || userSurname) && (
           <p>
             {' '}
             {userName}
@@ -61,6 +62,7 @@ export default function Room(props) {
             {' '}
             {lastMessage}
           </p>
+          )}
         </div>
       </div>
     </div>
