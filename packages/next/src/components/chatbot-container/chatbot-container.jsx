@@ -65,6 +65,7 @@ export default function ChatbotContainer() {
   const backHandler = useCallback(() => {
     dispatch(messages({ rows: [] }));
     dispatch(current({ id: null, name: null }));
+    window.history.replaceState({}, document.title, window.location.pathname);
   }, []);
 
   return (
