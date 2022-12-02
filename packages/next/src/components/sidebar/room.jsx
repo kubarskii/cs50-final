@@ -6,11 +6,17 @@ import { current } from '../../store/slices/room.slice';
 export default function Room(props) {
   const {
     roomId,
+    sender,
     roomName,
     lastMessage = '',
     userId: id,
     isSelected,
   } = props;
+
+  const {
+    user_name: userName,
+    user_surname: userSurname,
+  } = sender;
 
   const dispatch = useDispatch();
 
@@ -46,7 +52,15 @@ export default function Room(props) {
         </div>
         <div>
           <h5><b>{roomName}</b></h5>
-          <p>{lastMessage}</p>
+          <p>
+            {' '}
+            {userName}
+            {' '}
+            {userSurname}
+            :
+            {' '}
+            {lastMessage}
+          </p>
         </div>
       </div>
     </div>

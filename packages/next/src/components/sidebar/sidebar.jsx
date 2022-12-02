@@ -14,8 +14,11 @@ export function RoomsList(props) {
 
   return (
     <>
-      {rooms.map(({ id: elRoomId, name: roomName, last_message: lastMessage }) => (
+      {rooms.map(({
+        members, id: elRoomId, name: roomName, last_message: lastMessage, sender_id: senderId,
+      }) => (
         <Room
+          sender={members.find((member) => member.user_id.toString() === senderId.toString())}
           isSelected={elRoomId === currentRoomId}
           roomId={elRoomId}
           roomName={roomName}

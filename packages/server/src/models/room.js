@@ -42,7 +42,8 @@ export default class Room extends Base {
                    u.surname as surname,
                    rooms.name,
                    rooms.id,
-                   m.message as last_message
+                   m.message as last_message,
+                   m.user_id as sender_id
             FROM rooms
                      LEFT JOIN room_members rm on rooms.id = rm.room_id
                      LEFT JOIN users u on u.id = rm.user_id
@@ -59,7 +60,7 @@ export default class Room extends Base {
                 FROM room_members
                 WHERE user_id = $1
             )
-            GROUP BY m.created_at, u.name, u.id, u.surname, rooms.name, rooms.id, m.message
+            GROUP BY m.created_at, u.name, u.id, u.surname, rooms.name, rooms.id, m.message, m.user_id
             ORDER BY m.created_at DESC NULLS LAST
         `;
 
@@ -89,6 +90,7 @@ export default class Room extends Base {
             id: el.id,
             last_message: el.last_message,
             name: el.name,
+            sender_id: el.sender_id,
           },
         );
       }
