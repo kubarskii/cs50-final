@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Monorepo for chat",
   "main": "index.js",
+  "type": "module",
   "workspaces": [
-    "/packages/*"
+    "/packages/*",
+    "/packages/core/*"
   ],
   "scripts": {
     "start:ui": "npm run dev --workspace=packages/next",
@@ -19,6 +21,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^28.1.3",
     "eslint": "8.18.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-plugin-import": "2.26.0",

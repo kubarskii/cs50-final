@@ -4,7 +4,7 @@ self.addEventListener('push', (ev) => {
     data.title,
     {
       body: data.body,
-      icon: '',
+      icon: '/android-chrome-192x192.png',
     },
   );
 });

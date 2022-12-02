@@ -1,4 +1,4 @@
-import debounce from '../src/next/src/utils/debounce';
+import debounce from '@me/next-ui/src/utils/debounce';
 
 jest.useFakeTimers();
 describe('debounce tests', () => {

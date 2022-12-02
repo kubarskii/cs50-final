@@ -1,5 +1,5 @@
-import { validateSchema, generateTypeErrorMessage } from '../src/lib/schema-validator';
-import { MESSAGE_STATUSES, MESSAGE_COMMANDS } from '../src/ws/constants';
+import { generateTypeErrorMessage, validateSchema } from '@me/server/src/utils/schema-validator';
+import { MESSAGE_COMMANDS, MESSAGE_STATUSES } from '@me/server/src/ws/constants';
 
 describe('Schema tests', () => {
   it('should check array schema based on type', () => {

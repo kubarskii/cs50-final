@@ -18,18 +18,15 @@ module.exports = class Router {
   /**
      * @param {any} srv
      * @param {string} [basePath]
-     * @param {string} [interceptEvent]
      * */
-  constructor(srv, basePath = '', interceptEvent = 'request') {
+  constructor(srv, basePath = '') {
     this.srv = srv;
-    this.interceptEvent = interceptEvent;
     this.basePath = basePath;
     this.init();
   }
 
   init() {
-    const event = this.interceptEvent;
-    this.srv.on(event, (...args) => this.handleRouters(...args));
+    this.srv.on('request', (...args) => this.handleRouters(...args));
   }
 
   findHandler(method, url) {
@@ -56,8 +53,9 @@ module.exports = class Router {
     const { pathname } = URL.parse(url);
     const urlWithoutBasePath = pathname.replace(this.basePath, '');
     const handler = this.findHandler(method, urlWithoutBasePath);
-    if (handler && typeof handler === 'function') handler(mixReq(req), mixRes(res));
-    else {
+    if (handler && typeof handler === 'function') {
+      handler(mixReq(req), mixRes(res));
+    } else {
       res.writeHead(404);
       res.end();
     }

@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo } from 'react';
+import { JWT } from '@me/server/src/utils/jwt';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ReadyState } from 'react-use-websocket';
-import { JWT } from '@me/server/src/utils/jwt';
 import styles from './sidebar.module.css';
 import useCookie from '../../hooks/useCookie';
 import UserInfo from './user-info';
@@ -32,16 +32,7 @@ export default function Sidebar() {
   const [token] = useCookie('accessToken');
   const decoded = JWT.decoderJWT(token);
   const { name, surname, id: userId } = decoded;
-  const { wsStatus: { wsState: readyState } } = useSelector((state) => state);
   const { id: currentRoomId } = useSelector((state) => state.rooms.currentRoom);
-
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Retrying',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-  }[readyState];
 
   useEffect(() => {
     if (currentRoomId) window.history.pushState({}, null, `/?roomId=${currentRoomId}`);
@@ -57,12 +48,6 @@ export default function Sidebar() {
           userId={userId}
         />
       </div>
-      {connectionStatus !== 'Open' && (
-      <div className={styles.connectionStatus}>
-        <p>{connectionStatus}</p>
-        <div className={styles.ring} />
-      </div>
-      )}
     </aside>
   );
 }

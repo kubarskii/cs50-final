@@ -14,6 +14,7 @@ import Header from '../header/header';
 import { SVGIcon } from '../button/button.component';
 import { current } from '../../store/slices/room.slice';
 import { messages } from '../../store/slices/messages.slice';
+import ConnectionIndicator from '../connection-indicator/connection-indicator.component';
 
 export default function ChatbotContainer() {
   const { sendMessage, readyState } = useContext(WebsocketContext);
@@ -155,6 +156,7 @@ export default function ChatbotContainer() {
           }}
         />
       </div>
+      <ConnectionIndicator />
     </div>
   );
 }

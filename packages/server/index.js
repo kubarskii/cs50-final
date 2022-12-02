@@ -1,5 +1,5 @@
 import http from 'http';
-import Router from '@me/router';
+import Router from '@me/http-router';
 import { UserController } from './src/controllers/user.controller';
 import { RoomController } from './src/controllers/room.controller';
 import runWS from './src/ws';

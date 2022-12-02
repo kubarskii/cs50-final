@@ -72,50 +72,6 @@
     color: currentColor;
 }
 
-.connectionStatus {
-    position: absolute;
-    bottom: 2rem;
-    width: fit-content;
-    height: 48px;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 1px solid #ccc;
-    border-radius: 40px;
-    display: flex;
-    align-items: center;
-    align-content: center;
-    padding: 0 1rem;
-    font-size: 1.1rem;
-    background: #fff;
-}
-
-.ring {
-    display: inline-block;
-    width: 3rem;
-    height: 3rem;
-}
-
-.ring:after {
-    content: " ";
-    display: block;
-    width: 2rem;
-    height: 2rem;
-    margin: 8px;
-    border-radius: 50%;
-    border: 6px solid #ccc;
-    border-color: #ccc transparent #ccc transparent;
-    animation: rotate 1.2s linear infinite;
-}
-
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
 
 .searchBarWrapper {
     padding: 12px;

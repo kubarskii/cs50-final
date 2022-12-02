@@ -1,4 +1,4 @@
-import Router from '@me/router';
+import Router from '@me/http-router';
 import http from 'http';
 import webPush from 'web-push';
 import { NOTIFICATIONS_PORT, PRIVATE_KEY, PUBLIC_KEY } from './constants';

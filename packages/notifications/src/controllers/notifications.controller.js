@@ -1,4 +1,4 @@
-import { DEFAULT_HEADERS } from '@me/router/constants';
+import { DEFAULT_HEADERS } from '@me/http-router/constants';
 import webPush from 'web-push';
 import db from '@me/server/src/utils/db';
 import authHeaderParser from '@me/server/src/utils/auth-header-parser';
