@@ -1,0 +1,51 @@
+
+.fillHeight {
+    flex: 1;
+    max-height: var(--app-height);
+}
+
+.contentWrapper {
+    flex: 1;
+    max-height: var(--app-height);
+}
+
+.asideWrapper {
+    transition: flex-basis .2s;
+    max-width: 300px;
+    z-index: 1000;
+}
+
+.hiddenCheckbox:checked + .asideWrapper {
+    overflow: hidden;
+}
+
+.hiddenCheckbox {
+    opacity: 0;
+    z-index: -1;
+    position: absolute;
+    left: -99999999px;
+}
+
+.backButton {
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    .asideWrapper {
+        max-width: 100%;
+    }
+
+    .backButton {
+        display: flex;
+    }
+
+    .hiddenCheckbox:checked + .contentWrapper {
+        /*display: none;*/
+    }
+
+    .hiddenCheckbox:checked  + .asideWrapper {
+        flex-basis: 0;
+        overflow: hidden;
+    }
+}

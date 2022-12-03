@@ -27,3 +27,13 @@ WS is used for messaging and instant update of the messages on UI side
 ## Testing
 To run test ```npm run test```
 
+
+## Git CRLF
+
+In order to prevent new line symbol to conflict with linter
+
+```
+git config core.autocrlf false
+git rm --cached -r .
+git add *
+```

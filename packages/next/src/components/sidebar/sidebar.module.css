@@ -1,0 +1,173 @@
+.asideComponent {
+    flex: 1;
+    flex-shrink: 3;
+    max-width: 300px;
+    overflow: auto;
+    border-right: 1px solid #dfe1e5;
+    position: relative;
+}
+
+@media screen and (max-width: 768px) {
+    .asideComponent {
+        max-width: 100vw;
+        width: 100vw;
+        flex: initial;
+    }
+}
+
+.userInfoContainer {
+    align-items: center;
+    display: flex;
+    height: 56px;
+    max-width: inherit;
+}
+
+.userAvatar {
+    margin-right: 4px;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+}
+
+.userName {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.roomComponent {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: 3rem;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    margin: 0 0.3rem;
+    padding: 0.5rem;
+}
+
+.roomComponent p {
+    font-size: .75rem;
+    color: var(--cool-grey);
+    font-weight: lighter;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.roomComponent:hover {
+    cursor: pointer;
+    background-color: hsl(240deg 5% 96%);
+}
+
+.roomComponent.selected {
+    background-color: rgb(51 144 236);
+    color: #fff;
+}
+
+.roomComponent.selected p {
+    color: currentColor;
+}
+
+.connectionStatus {
+    position: absolute;
+    bottom: 2rem;
+    width: fit-content;
+    height: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid #ccc;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    padding: 0 1rem;
+    font-size: 1.1rem;
+    background: #fff;
+}
+
+.ring {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+}
+
+.ring:after {
+    content: " ";
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #ccc;
+    border-color: #ccc transparent #ccc transparent;
+    animation: rotate 1.2s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.searchBarWrapper {
+    padding: 12px;
+}
+
+.searchBar {
+    transition: 0.5s;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background-color: #E8F2FD;
+}
+
+.searchBar input {
+    background-color: transparent;
+    height: 100%;
+}
+
+.searchBar.active {
+    transition: 0.5s;
+    border: 1px solid #D9D9D9;
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.searchIconSpan {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+}
+
+.searchIconSpan img {
+    height: 20px;
+    width: 20px;
+}
+
+.clearSearchBarButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.clearSearchBarButton img {
+    height: 20px;
+    width: 20px;
+}
