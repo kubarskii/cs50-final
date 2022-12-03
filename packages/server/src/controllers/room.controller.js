@@ -95,7 +95,7 @@ export const RoomController = {
     res.end();
   }, // token, roomId
   async createRoom(req, res) {
-    const body = await getBody(req);
+    const body = await getBody(req).catch() || {};
     const authHeader = req.headers.authorization;
     checkHeader(req, res, authHeader);
     const { type, payload: { id: creatorId } } = authHeaderParser(authHeader);
@@ -105,16 +105,19 @@ export const RoomController = {
       return;
     }
     /**
-     * userIds - array of user ids that should be added to room
-     * */
-    const { userIds, name: roomName = 'Test' } = body;
+         * userIds - array of user ids that should be added to room
+         * */
+    const { userIds, name: roomName = 'DEFAULT_ROOM' } = body;
+    if (!userIds) {
+      return res.error(400, {}, DEFAULT_HEADERS);
+    }
     const { rows: createdRoomRows } = await room.createRoom(creatorId, roomName);
     const { id: roomId } = createdRoomRows[0];
     const errorsStack = [];
     const addedUsers = [];
     /**
-     * for each existing user, add
-     * */
+         * for each existing user, add
+         * */
     // eslint-disable-next-line no-restricted-syntax
     for await (const userToAddId of [creatorId, ...userIds]) {
       const { rows } = await user.getById(userToAddId);
@@ -129,9 +132,7 @@ export const RoomController = {
         })
         .catch((e) => errorsStack.push({ error: e.message, userId: userToAddId }));
     }
-    res.writeHead(201, 'Created', DEFAULT_HEADERS);
-    res.write(JSON.stringify({ errors: errorsStack, success: addedUsers }));
-    res.end();
+    return res.json(201, { errors: errorsStack, success: addedUsers }, DEFAULT_HEADERS);
   },
   async getUsersInRoom(req, res) {
     const authHeader = req.headers.authorization;

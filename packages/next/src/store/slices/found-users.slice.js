@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export const foundUsersSlice = createSlice({
-  name: "foundUsers",
+  name: 'foundUsers',
   initialState: {
     users: [],
   },

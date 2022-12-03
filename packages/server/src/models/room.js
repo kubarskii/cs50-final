@@ -2,8 +2,8 @@ import Base from './base';
 
 export default class Room extends Base {
   /**
-     * @protected
-     * */
+   * @protected
+   * */
   getTable() {
     return 'rooms';
   }
@@ -31,8 +31,7 @@ export default class Room extends Base {
 
   async createRoom(creatorId, name) {
     const sql = 'INSERT INTO rooms (name, creator_id) VALUES ($1, $2) RETURNING *';
-    const data = await this.db.query(sql, [name, creatorId]);
-    return data;
+    return this.db.query(sql, [name, creatorId]);
   }
 
   async getUserRooms(userId) {
@@ -43,7 +42,8 @@ export default class Room extends Base {
                    rooms.name,
                    rooms.id,
                    m.message as last_message,
-                   m.user_id as sender_id
+                   m.user_id as sender_id,
+                   rooms.type_id
             FROM rooms
                      LEFT JOIN room_members rm on rooms.id = rm.room_id
                      LEFT JOIN users u on u.id = rm.user_id
@@ -61,14 +61,17 @@ export default class Room extends Base {
                 WHERE user_id = $1
             )
             GROUP BY m.created_at, u.name, u.id, u.surname, rooms.name, rooms.id, m.message, m.user_id
-            ORDER BY m.created_at DESC NULLS LAST
+            ORDER BY id, m.message DESC NULLS LAST
         `;
 
     const data = await this.db.query(sql, [userId]);
     const processedRows = [];
 
     data.rows.forEach((el) => {
-      const lastProcessed = processedRows.length ? processedRows[processedRows.length - 1] : null;
+      const lastProcessed = processedRows.length
+        ? processedRows.at(-1)
+        : null;
+
       if (lastProcessed && lastProcessed.id === el.id) {
         processedRows[processedRows.length - 1].members = [
           ...lastProcessed.members,
@@ -97,7 +100,7 @@ export default class Room extends Base {
     });
 
     const processedRowsValidRoomNames = processedRows.map((el) => {
-      if (el.members.length === 2) {
+      if (el.members.length === 2 && el.type_id === 1) {
         return {
           ...el,
           name: [el.members.find((user) => user.user_id !== userId)]

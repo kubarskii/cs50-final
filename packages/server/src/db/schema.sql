@@ -16,15 +16,27 @@ CREATE TABLE statuses
 ALTER TABLE statuses
     ADD CONSTRAINT pkStatusId PRIMARY KEY (id);
 
+CREATE TABLE room_types
+(
+    id   int generated always as identity,
+    name varchar NOT NULL
+);
+
+CREATE UNIQUE INDEX uinRoomTypes ON room_types (name);
+
 CREATE TABLE rooms
 (
     id         bigint generated always as identity,
     name       varchar NOT NULL,
-    creator_id int     NOT NULL
+    creator_id int     NOT NULL,
+    type_id    int DEFAULT 1
 );
 
 ALTER TABLE rooms
     ADD CONSTRAINT pkRoom PRIMARY KEY (id);
+
+ALTER TABLE rooms
+    ADD CONSTRAINT fkRoomType FOREIGN KEY (type_id) REFERENCES room_types (id);
 
 CREATE TABLE users
 (
@@ -58,7 +70,6 @@ ALTER TABLE room_members
 
 ALTER TABLE room_members
     ADD CONSTRAINT uniqueOneUserPerRoom UNIQUE (room_id, user_id);
-
 
 CREATE UNIQUE INDEX akUsersLogin ON users (login);
 
@@ -120,15 +131,14 @@ ALTER TABLE not_received_messages
 ALTER TABLE not_received_messages
     ADD CONSTRAINT fkMessageId FOREIGN KEY (message_id) REFERENCES messages (id) ON DELETE CASCADE;
 
-
 CREATE TABLE notifications
 (
-    id             bigint generated always as identity,
-    user_id        bigint,
-    endpoint       varchar NOT NULL,
+    id              bigint generated always as identity,
+    user_id         bigint,
+    endpoint        varchar NOT NULL,
     expiration_time timestamp default null,
-    p256dh         varchar NOT NULL,
-    auth           varchar NOT NULL
+    p256dh          varchar NOT NULL,
+    auth            varchar NOT NULL
 );
 
 ALTER TABLE notifications

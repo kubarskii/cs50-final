@@ -1,8 +1,6 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styles from './header.module.css';
 import Logo from './logo/logo';
-// import MEButton from '../button/button.component';
 
 export default function Header(props) {
   const {

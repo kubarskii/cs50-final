@@ -64,7 +64,7 @@ export default function SearchBar(props) {
         />
 
         {searchActive && (
-          <button className={styles.clearSearchBarButton} onClick={clear}>
+          <button type="button" className={styles.clearSearchBarButton} onClick={clear}>
             <CrossIcon />
           </button>
         )}

@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "start:ui": "npm run dev --workspace=packages/next",
+    "start:ui:build": "npm run start --workspace=packages/next",
+    "build:ui": "npm run build --workspace=packages/next",
     "start:server": "npm start --workspace=packages/server",
     "start:notifications": "npm start --workspace=packages/notifications",
     "test": "jest",

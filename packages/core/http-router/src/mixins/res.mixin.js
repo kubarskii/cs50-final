@@ -14,7 +14,7 @@ const additional = {
     this.write(str);
     this.end();
   },
-  error({ statusCode, msg = '', headers = {} }) {
+  error(statusCode = 500, msg = '', headers = {}) {
     this.writeHead(statusCode, msg, headers);
     this.end();
   },

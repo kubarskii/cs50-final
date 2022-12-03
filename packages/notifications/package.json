@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/kubarskii/cs50-final#readme",
   "dependencies": {
+    "firebase": "^9.14.0",
     "web-push": "^3.5.0"
   }
 }

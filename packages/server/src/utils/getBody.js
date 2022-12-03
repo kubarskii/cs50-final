@@ -16,8 +16,11 @@ export const getBody = (stream) => new Promise((resolve, reject) => {
      * */
   const addChunk = (c) => bodyParts.push(c);
   const partsToJSON = () => {
+    const str = Buffer.concat(bodyParts).toString();
+    if (!str) resolve(str);
     try {
-      resolve(JSON.parse(Buffer.concat(bodyParts).toString()));
+      const json = JSON.parse(str);
+      resolve(json);
     } catch (e) {
       reject(e);
     }
