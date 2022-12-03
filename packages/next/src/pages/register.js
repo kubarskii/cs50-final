@@ -50,17 +50,17 @@ function RegisterPage() {
                   </div>
                 </div>
               </div>
-              <div className="form-row m-b-55">
+              <div className="form-row">
                 <div className="name">Name</div>
                 <div className="value">
                   <div className="row row-space">
-                    <div className="col-2">
+                    <div className="col-auto">
                       <div className="input-group-desc">
                         <input required className="input--style-5" type="text" name="name" />
                         <label className="label--desc">first name</label>
                       </div>
                     </div>
-                    <div className="col-2">
+                    <div className="col-auto">
                       <div className="input-group-desc">
                         <input required className="input--style-5" type="text" name="surname" id="surname" />
                         <label htmlFor="surname" className="label--desc">last name</label>
@@ -86,10 +86,10 @@ function RegisterPage() {
                 </div>
               </div>
               {!!error && <p style={{ color: 'red' }}>{error}</p>}
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', marginTop: '8px' }}>
                 <input
                   style={{ marginLeft: 'auto' }}
-                  className="btn btn--radius-2 btn--blue"
+                  className="btn btn-info btn-md"
                   type="submit"
                   value="Sign up"
                 />

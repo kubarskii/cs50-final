@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useContext, useEffect, useMemo, useRef,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,6 +14,7 @@ import Header from '../header/header';
 import { SVGIcon } from '../button/button.component';
 import { current } from '../../store/slices/room.slice';
 import { messages } from '../../store/slices/messages.slice';
+import ConnectionIndicator from '../connection-indicator/connection-indicator.component';
 
 export default function ChatbotContainer() {
   const { sendMessage, readyState } = useContext(WebsocketContext);
@@ -60,10 +62,11 @@ export default function ChatbotContainer() {
     },
   }), [false]);
 
-  const backHandler = () => {
+  const backHandler = useCallback(() => {
     dispatch(messages({ rows: [] }));
     dispatch(current({ id: null, name: null }));
-  };
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }, []);
 
   return (
     <div className={combineClasses('row nowrap overflow-hidden', styles.fillHeight)}>
@@ -154,6 +157,7 @@ export default function ChatbotContainer() {
           }}
         />
       </div>
+      <ConnectionIndicator />
     </div>
   );
 }

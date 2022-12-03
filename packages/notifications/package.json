@@ -1,0 +1,22 @@
+{
+  "name": "@me/notifications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubarskii/cs50-final.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kubarskii/cs50-final/issues"
+  },
+  "homepage": "https://github.com/kubarskii/cs50-final#readme",
+  "dependencies": {
+    "web-push": "^3.5.0"
+  }
+}

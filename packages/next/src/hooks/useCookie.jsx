@@ -9,7 +9,8 @@ export function stringifyOptions(options) {
     }
     if (options[key] === false) {
       return acc;
-    } if (options[key] === true) {
+    }
+    if (options[key] === true) {
       return `${acc}; ${key}`;
     }
     return `${acc}; ${key}=${options[key]}`;
@@ -39,11 +40,11 @@ export const setCookie = (name, value, options) => {
 
 export const getCookie = (name, initialValue = '') => (
   (isBrowser
-            && document.cookie.split('; ').reduce((r, v) => {
-              const parts = v.split('=');
-              return parts[0] === name ? decodeURIComponent(parts[1]) : r;
-            }, ''))
-        || initialValue
+        && document.cookie.split('; ').reduce((r, v) => {
+          const parts = v.split('=');
+          return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+        }, ''))
+    || initialValue
 );
 
 export default function useCookie(key, initialValue) {

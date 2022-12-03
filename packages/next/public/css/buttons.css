@@ -17,6 +17,7 @@
 
 .btn:hover {
     box-shadow: var(--default-shadow);
+    text-decoration: none;
 }
 
 .btn-s {

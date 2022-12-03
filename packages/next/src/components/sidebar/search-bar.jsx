@@ -1,18 +1,18 @@
-import React from "react";
-import styles from "./sidebar.module.css";
-import { UserService } from "../../services/user.service";
-import debounce from "../../utils/debounce";
-import { CrossIcon, SearchIcon } from "../icons/icons";
-import { PORT } from "../../../constants";
-import { setUsers } from "../../store/slices/found-users.slice";
-import { useDispatch } from "react-redux";
+import React, { useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import styles from './sidebar.module.css';
+import { UserService } from '../../services/user.service';
+import debounce from '../../utils/debounce';
+import { CrossIcon, SearchIcon } from '../icons/icons';
+import { PORT } from '../../../constants';
+import { setUsers } from '../../store/slices/found-users.slice';
 
 export default function SearchBar(props) {
   const { token } = props;
-  const [searchString, setSearchString] = React.useState("");
+  const [searchString, setSearchString] = React.useState('');
   const [searchActive, setSearchActive] = React.useState(false);
-  
-  const debouncer = () => debounce(fetchUsers, 500)()
+
+  const debouncer = useMemo(() => debounce(fetchUsers, 500), [false]);
   const dispatch = useDispatch();
 
   const onChange = (e) => {
@@ -24,23 +24,23 @@ export default function SearchBar(props) {
     } else {
       setSearchActive(false);
     }
-    debouncer();
+    debouncer(search);
   };
 
-  async function fetchUsers() {
+  async function fetchUsers(search) {
     const { hostname, protocol } = window.location;
-    if (searchString.length >= 2) {
+    if (search.length >= 2) {
       const resp = await UserService.findUser(
         token,
-        searchString,
-        `${protocol}//${hostname}:${PORT}`
+        search,
+        `${protocol}//${hostname}:${PORT}`,
       );
-      dispatch(setUsers(resp))
+      dispatch(setUsers(resp));
     }
   }
 
   const clear = () => {
-    setSearchString("");
+    setSearchString('');
     setSearchActive(false);
   };
 
@@ -48,9 +48,9 @@ export default function SearchBar(props) {
     <div className={styles.searchBarWrapper}>
       <div
         className={[
-          searchActive ? styles.active : "",
+          searchActive ? styles.active : '',
           styles.searchBar,
-        ].join(" ")}
+        ].join(' ')}
       >
         <span className={styles.searchIconSpan}>
           <SearchIcon />
