@@ -1,0 +1,61 @@
+.userSearchBody {
+    display: flex;
+    align-items: center;
+}
+
+.roomTextBody {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    margin-left: 8px;
+}
+
+.roomTextBody h1 {
+    font-size: .9rem;
+    font-weight: bold;
+    color: #000;
+}
+
+.roomTextBody h2 {
+    font-size: .7rem;
+    color: #686868;
+}
+
+.roomItemBody {
+    display: flex;
+    align-items: center;
+    height: 54px;
+    background-color: #fff;
+    border-radius: 10px;
+    margin: 0 4px;
+}
+
+.roomItemBody.selected {
+    background-color: #3390ec;
+}
+
+.roomItemBody:hover {
+    background-color: #f4f4f5;
+    cursor: pointer;
+}
+
+.roomCheckboxBody {
+    height: 20px;
+    width: 20px;
+    margin-left: 8px;
+}
+
+.roomCheckboxBody input {
+    height: 100%;
+    width: 100%;
+}
+
+.roomAvatarWrapper {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-left: 8px;
+}
